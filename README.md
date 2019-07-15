@@ -1,5 +1,5 @@
 
-# Breast Cancer Diagnosis
+# Diabetic Retinopathy Diagnosis
 
 ## Install & Run
 Install `conda`, then:
@@ -11,6 +11,7 @@ Install `conda`, then:
 `conda install notebook ipykernel`
 `ipython kernel install --user --name=PythonGPU`
 `jupyter notebook`
+`pip3 install opencv-python OR conda install -c menpo opencv`
 
 Then in the notebook editor click kernel->change kernel->PythonGPU.
 
@@ -23,3 +24,5 @@ Google Diabetic Retinopathy competition (resized by tanlovesmath)
  - resized_train_cropped (data/old), trainLabels_cropped.csv (data/old.csv)
 
 All data is preprocessed and stored in data/proc/{class \\in {0,1,2,3,4}}
+
+To download and process data, run `setup.sh` and then `python3 processing/bulk-preprocess.py`

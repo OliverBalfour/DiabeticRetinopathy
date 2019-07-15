@@ -15,7 +15,7 @@ print('Testing model now...')
 test_dir = 'data/proc/'
 
 # load df and sort alphanumerically
-test_df = pd.read_csv('test.csv')
+test_df = pd.read_csv('data/new.csv') # new.csv and old.csv are needed...
 test_df = test_df.sort_values(by=['id_code'])
 test_df = test_df.reset_index(drop=True)
 
@@ -38,6 +38,3 @@ print(probabilities)
 # can be improved because neighbouring labels are correlated
 test_df['diagnosis'] = np.argmax(probabilities, axis=1)
 test_df.to_csv('submission.csv', index=False)
-
-# also kaggle version MUST have image transform code embedded; try running preprocessing on train data as part of this file?
-# also USE GIT

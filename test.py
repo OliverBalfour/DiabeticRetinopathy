@@ -1,6 +1,8 @@
 
 # module to specify base application, number of cut off layers, number of added layers, etc.
 # evaluate each application on each image, potentially using data augmentation, and use those as inputs
+# change methodology to support arbitrary class groupings and different last layer encodings (not one-hot)
+# optimised quad weighted kappa and show different, more useful metrics (sensitivity/specificity and conf mats)
 
 import pandas as pd
 import numpy as np
@@ -77,6 +79,5 @@ hist = model.fit_generator(
 print(hist.history)
 
 model.save('models/cnn-final-2.h5')
-# need some kind of save & quit mechanism
 
 #{'loss': [0.8080748800250516, 0.7565884429569193], 'acc': [0.734638, 0.74846864], 'val_loss': [0.8334946387745056, 0.8490050041990489], 'val_acc': [0.73297215, 0.72987616]}

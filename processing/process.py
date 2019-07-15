@@ -1,21 +1,8 @@
 
 import numpy as np
-import pandas as pd
-import cv2, os
+import cv2
 
-df_train_1 = pd.read_csv('data/new.csv')
-df_train_1['path'] = 'data/new/' + df_train_1.id_code + '.png'
-
-df_train_2 = pd.read_csv('data/old.csv')
-df_train_2['id_code'] = df_train_2.image
-df_train_2['diagnosis'] = df_train_2.level
-df_train_2['path'] = 'data/old/' + df_train_2.id_code + '.jpeg'
-df_train_2.drop(['Unnamed: 0', 'Unnamed: 0.1', 'image', 'level'],inplace=True,axis=1)
-df_train_2 = df_train_2[[os.path.isfile(fname) for fname in df_train_2.path]]
-
-df_train = pd.concat([df_train_2, df_train_1])
-
-image_size = 224
+default_image_size = 224
 
 # scales so that the radius of the image is constant
 # approximates the initial radius by calculating the number of non-black pixels along the middle row and halving
@@ -58,7 +45,7 @@ def create_circle_mask (img, rad):
 	return circle_mask
 
 # takes a df row and preprocesses the referenced image
-def preprocess (path, id_code, save, rad):
+def preprocess (path, id_code, save, rad=default_image_size//2):
 	img = cv2.imread(path)
 	# scale the image to fit in a 224x224x3 image tensor
 	scaled_img = scale_max(img, rad//0.90)
@@ -74,13 +61,3 @@ def preprocess (path, id_code, save, rad):
 	grey_outline = (1 - circle_mask) * 128
 	crop_img = crop_image(eye_img * circle_mask + grey_outline, rad)
 	cv2.imwrite(save + id_code + '.png', crop_img)
-
-#
-for row in df_train.itertuples():
-	cls = str(row.diagnosis)
-	try:
-		preprocess(row.path, row.id_code, f'data/proc/{cls}/', image_size//2)
-	except:
-		print(row.path)
-
-print('Preprocessed training images.')
