@@ -7,12 +7,12 @@ import tensorflow.keras as keras
 from tensorflow.keras.applications.mobilenet import preprocess_input
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-model = keras.models.load_model('models/cnn-final.h5')
+model = keras.models.load_model('models/cnn-final-2.h5')
 model.summary()
 
 print('Testing model now...')
 
-test_dir = 'test_altered/'
+test_dir = 'data/proc/'
 
 # load df and sort alphanumerically
 test_df = pd.read_csv('test.csv')

@@ -18,7 +18,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 # config
 batch_size = 12 # don't have the mem for 15
 num_epochs = 3
-train_dir = 'train_altered/'
+train_dir = 'data/proc/'
 
 #imports the mobilenet model and discards the output layer
 base_model = MobileNet(weights='imagenet', include_top=False)
@@ -70,7 +70,7 @@ hist = model.fit_generator(
 	generator=train_generator,
 	steps_per_epoch=20, #(train_generator.n // batch_size),
 	epochs=num_epochs, callbacks=[checkpoint],
-	validation_data=valid_generator, 
+	validation_data=valid_generator,
 	validation_steps=2 #(valid_generator.n // batch_size)
 )
 
