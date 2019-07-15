@@ -3,20 +3,17 @@ import numpy as np
 import pandas as pd
 import cv2, os
 
-df_train_1 = pd.read_csv('train.csv')
-df_train_1['path'] = 'train_images/' + df_train_1.id_code + '.png'
+df_train_1 = pd.read_csv('data/new.csv')
+df_train_1['path'] = 'data/new/' + df_train_1.id_code + '.png'
 
-df_train_2 = pd.read_csv('trainLabels_cropped.csv')
+df_train_2 = pd.read_csv('data/old.csv')
 df_train_2['id_code'] = df_train_2.image
 df_train_2['diagnosis'] = df_train_2.level
-df_train_2['path'] = 'resized_train_cropped/resized_train_cropped/' + df_train_2.id_code + '.jpeg'
+df_train_2['path'] = 'data/old/' + df_train_2.id_code + '.jpeg'
 df_train_2.drop(['Unnamed: 0', 'Unnamed: 0.1', 'image', 'level'],inplace=True,axis=1)
 df_train_2 = df_train_2[[os.path.isfile(fname) for fname in df_train_2.path]]
 
 df_train = pd.concat([df_train_2, df_train_1])
-
-df_test = pd.read_csv('test.csv')
-df_test['path'] = 'test_images/' + df_test.id_code + '.png'
 
 image_size = 224
 
@@ -78,17 +75,12 @@ def preprocess (path, id_code, save, rad):
 	crop_img = crop_image(eye_img * circle_mask + grey_outline, rad)
 	cv2.imwrite(save + id_code + '.png', crop_img)
 
+#
 for row in df_train.itertuples():
 	cls = str(row.diagnosis)
 	try:
-		preprocess(row.path, row.id_code, f'train_altered/{cls}/', image_size//2)
+		preprocess(row.path, row.id_code, f'data/proc/{cls}/', image_size//2)
 	except:
 		print(row.path)
 
 print('Preprocessed training images.')
-
-for row in df_test.itertuples():
-	# needs a subdir for class_mode=None to work
-	preprocess(row.path, row.id_code, 'test_altered/data/', image_size//2)
-
-print('Preprocessed testing images.')

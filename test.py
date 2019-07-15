@@ -1,4 +1,7 @@
 
+# module to specify base application, number of cut off layers, number of added layers, etc.
+# evaluate each application on each image, potentially using data augmentation, and use those as inputs
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -68,7 +71,7 @@ hist = model.fit_generator(
 	steps_per_epoch=20, #(train_generator.n // batch_size),
 	epochs=num_epochs, callbacks=[checkpoint],
 	validation_data=valid_generator, 
-	validation_steps=5 #(valid_generator.n // batch_size)
+	validation_steps=2 #(valid_generator.n // batch_size)
 )
 
 print(hist.history)
