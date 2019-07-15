@@ -13,8 +13,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
 
 # config
-batch_size = 10
-num_epochs = 2
+batch_size = 12 # don't have the mem for 15
+num_epochs = 3
 train_dir = 'train_altered/'
 
 #imports the mobilenet model and discards the output layer
@@ -65,13 +65,15 @@ checkpoint = ModelCheckpoint('models/cnn', save_weights_only=True, verbose=1, pe
 
 hist = model.fit_generator(
 	generator=train_generator,
-	steps_per_epoch=100, #(train_generator.n // batch_size),
+	steps_per_epoch=20, #(train_generator.n // batch_size),
 	epochs=num_epochs, callbacks=[checkpoint],
 	validation_data=valid_generator, 
-	validation_steps=100//5 #(valid_generator.n // batch_size)
+	validation_steps=5 #(valid_generator.n // batch_size)
 )
 
 print(hist.history)
 
 model.save('models/cnn-final-2.h5')
 # need some kind of save & quit mechanism
+
+#{'loss': [0.8080748800250516, 0.7565884429569193], 'acc': [0.734638, 0.74846864], 'val_loss': [0.8334946387745056, 0.8490050041990489], 'val_acc': [0.73297215, 0.72987616]}
