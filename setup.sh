@@ -1,5 +1,16 @@
 #!/bin/sh
 
+mkdir -p data/proc/224/0
+mkdir data/proc/224/1
+mkdir data/proc/224/2
+mkdir data/proc/224/3
+mkdir data/proc/224/4
+mkdir -p data/proc/299/0
+mkdir data/proc/299/1
+mkdir data/proc/299/2
+mkdir data/proc/299/3
+mkdir data/proc/299/4
+
 echo "Make sure the kaggle CLI is installed"
 
 kaggle d download tanlikesmath/diabetic-retinopathy-resized

@@ -1,5 +1,6 @@
 
 import pandas as pd
+import os
 
 # returns unified DataFrame with path, id_code and diagnosis columns
 def get_train_df ():

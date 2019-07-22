@@ -1,9 +1,3 @@
-
-# module to specify base application, number of cut off layers, number of added layers, etc.
-# evaluate each application on each image, potentially using data augmentation, and use those as inputs
-# change methodology to support arbitrary class groupings and different last layer encodings (not one-hot)
-# optimised quad weighted kappa and show different, more useful metrics (sensitivity/specificity and conf mats)
-
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -15,20 +9,20 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
 # config
-batch_size = 10 # don't have the mem for 15
+batch_size = 10
 num_epochs = 3
 train_dir = 'data/proc/'
 model_name = 'models/h5/simple-cnn.h5'
 
 # construct the model
 model_in = Input(shape=(224,224,3))
-x = Conv2D(32, kernel_size=(5,5), activation='relu')(model_in)
+x = Conv2D(16, kernel_size=(7,7), activation='relu')(model_in)
 x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
-x = Conv2D(64, kernel_size=(5,5), activation='relu')(x)
+x = Conv2D(32, kernel_size=(5,5), activation='relu')(x)
 x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
 x = Flatten()(x)
-x = Dense(512, activation='relu')(x)
 x = Dense(256, activation='relu')(x)
+x = Dense(128, activation='relu')(x)
 model_out = Dense(5, activation='softmax')(x)
 
 # create the model
