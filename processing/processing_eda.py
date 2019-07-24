@@ -20,13 +20,20 @@ samples = np.ndarray.flatten(np.array([
 def draw_samples (images):
 	fig = plt.figure(figsize=(15, 8))
 	for i, id_code in enumerate(samples):
-		ax = fig.add_subplot(no_samples, len(classes), i+1), xticks=[], yticks=[])
-		plt.imshow(images[i])
+		ax = fig.add_subplot(no_samples, len(classes), i+1, xticks=[], yticks=[])
+		plt.imshow(images[i]/255)
 		if i // len(classes) == 0:
 			ax.set_title(class_names[i%len(classes)])
 	plt.show()
 
+from process import process, post_process
+
+# process an image and save it in each specified size
+def process_image (read, size):
+	return post_process(process(cv2.imread(read)), size)
+
 draw_samples([
-	cv2.imread(f'data/proc/299/{train_df.loc[train_df.id_code == id_code].sample().diagnosis}/{id_code}.png')
+	cv2.imread('data/proc/299/'+str(int(train_df.loc[train_df.id_code==id_code].sample().diagnosis))+'/'+id_code+'.png')
+	# process_image(train_df.loc[train_df.id_code==id_code].path.item(), 299)
 	for id_code in samples
 ])
