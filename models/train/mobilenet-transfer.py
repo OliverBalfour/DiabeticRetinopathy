@@ -4,6 +4,11 @@
 # change methodology to support arbitrary class groupings and different last layer encodings (not one-hot)
 # optimised quad weighted kappa and show different, more useful metrics (sensitivity/specificity and conf mats)
 
+# module to compute convolved outputs
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -19,7 +24,7 @@ from tensorflow.keras.optimizers import Adam
 # config
 batch_size = 12 # don't have the mem for 15
 num_epochs = 3
-train_dir = 'data/proc/'
+train_dir = 'data/proc/224/'
 model_name = 'models/h5/mobilenet-transfer.h5'
 
 #imports the mobilenet model and discards the output layer
@@ -37,7 +42,7 @@ model = Model(inputs=base_model.input, outputs=preds)
 
 # specify that we're not continuing to train the preset model
 for index, layer in enumerate(model.layers):
-	layer.trainable = index > 20
+	layer.trainable = index > 87
 
 # images must be in class subfolders
 # this handles data augmentation
