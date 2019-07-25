@@ -10,6 +10,7 @@ mkdir data/proc/299/1
 mkdir data/proc/299/2
 mkdir data/proc/299/3
 mkdir data/proc/299/4
+mkdir data/vectors
 
 echo "Make sure the kaggle CLI is installed"
 
