@@ -3,9 +3,9 @@ import numpy as np
 import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-# takes data/vectors/model/0-4.npy and creates X and Y vectors
-def generate_xy (model):
-	vdir = 'data/vectors/'+model+'/'
+# takes data/vectors/modelname/0-4.npy and creates X and Y vectors
+def generate_xy (modelname):
+	vdir = 'data/vectors/'+modelname+'/'
 	files = os.listdir(vdir)
 	if 'X.npy' in files: files.remove('X.npy')
 	if 'Y.npy' in files: files.remove('Y.npy')
@@ -19,6 +19,11 @@ def generate_xy (model):
 		Y[i,cid] = 1
 	np.save(vdir+'X.npy', X)
 	np.save(vdir+'Y.npy', Y)
+
+def load_xy (modelname):
+	X = np.load('data/vectors/'+modelname+'/X.npy')
+	Y = np.load('data/vectors/'+modelname+'/Y.npy')
+	return (X, Y)
 
 # wraps a generator and ignores errors
 def gen_wrapper (gen):
