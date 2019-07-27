@@ -50,7 +50,7 @@ def epoch (samples, stop=None):
 def process_class_augmentations (samples, class_size):
 	# copy over max(class_size, len(samples)) images
 	for sample in samples[:class_size]:
-		if not os.path.isfile(sample[0]):
+		if not os.path.isfile(sample[1]):
 			process_image(sample[0], sample[1], sizes)
 			print('.', end='', flush=True)
 
