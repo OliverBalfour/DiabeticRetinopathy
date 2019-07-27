@@ -1,3 +1,0 @@
-train short epochs, and after each epoch save the model
-when running the model trainer, query for overwrite or continue training existing
-

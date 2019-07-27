@@ -4,7 +4,7 @@ import glob, os
 
 broken = []
 
-for fname in glob.glob('data/proc/224/**/*.png'):
+for fname in glob.glob('data/proc/new/224/**/*.png') + glob.glob('data/proc/old/224/**/*.png') + glob.glob('data/proc/aug/224/**/*.png'):
 	try:
 		Image.open(fname).verify()
 	except:

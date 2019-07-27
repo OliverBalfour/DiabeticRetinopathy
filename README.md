@@ -37,6 +37,8 @@ Download data, preprocess, augment, train models, train stacked models, etc.
 
 0. `setup.sh` to download data
 0. `python3 processing/preprocess.py` to preprocess it
+0. `python3 processing/augment.py` to augment it
+0. `python3 processing/corruption-checker.py` and delete all corrupt images (in 224 and 299 dirs)
 0. `python3 models/train/simple-cnn.py` to train main CNN
 0. `python3 models/extraction/*.py` to extract features using all CNNs
 0. `python3 models/train/*.py` to train other models stacked on CNN filters

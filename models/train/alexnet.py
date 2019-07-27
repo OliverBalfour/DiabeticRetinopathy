@@ -13,8 +13,8 @@ from model_utils import gen_wrapper as gen
 # config
 batch_size = 128
 num_epochs = 5 # 10mins each
-train_dir = 'data/proc/new/224/'
-model_name = 'models/h5/alexnet-3.h5'
+train_dir = 'data/proc/aug/224/'
+model_name = 'models/h5/alexnet-aug-1.h5'
 
 model = Sequential()
 

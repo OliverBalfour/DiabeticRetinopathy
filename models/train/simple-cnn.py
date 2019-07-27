@@ -9,8 +9,8 @@ from tensorflow.keras.models import Model
 # config
 batch_size = 10
 num_epochs = 3
-train_dir = 'data/proc/224/'
-model_name = 'models/h5/simple-cnn.h5'
+train_dir = 'data/proc/aug/224/'
+model_name = 'models/h5/simple-cnn-aug.h5'
 
 # construct the model
 model_in = Input(shape=(224,224,3))
