@@ -31,4 +31,14 @@ Google Diabetic Retinopathy competition (resized by tanlovesmath)
 
 All data is preprocessed and stored in data/proc/{size \\in {224,299}}/{class \\in {0,1,2,3,4}}
 
-To download and process data, run `setup.sh` and then `python3 processing/bulk-preprocess.py`
+## Running
+
+Download data, preprocess, augment, train models, train stacked models, etc.
+
+0. `setup.sh` to download data
+0. `python3 processing/preprocess.py` to preprocess it
+0. `python3 models/train/simple-cnn.py` to train main CNN
+0. `python3 models/extraction/*.py` to extract features using all CNNs
+0. `python3 models/train/*.py` to train other models stacked on CNN filters
+
+TODO: Once the pipeline is complete, run `python3 models/evaluate.py filename.png/jpg` to get a prediction for a single image.

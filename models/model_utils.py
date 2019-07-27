@@ -30,6 +30,8 @@ def gen_wrapper (gen):
 	while True:
 		try:
 			yield next(gen)
+		except GeneratorExit:
+			raise GeneratorExit
 		except:
 			pass
 

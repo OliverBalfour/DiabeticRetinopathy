@@ -3,15 +3,13 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten
-from tensorflow.keras.preprocessing import image
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
 
 # config
 batch_size = 10
 num_epochs = 3
-train_dir = 'data/proc/'
+train_dir = 'data/proc/224/'
 model_name = 'models/h5/simple-cnn.h5'
 
 # construct the model

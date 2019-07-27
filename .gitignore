@@ -1,5 +1,4 @@
 
 data
-models/h5/*.h5
+models/h5
 *.pyc
-tmp
