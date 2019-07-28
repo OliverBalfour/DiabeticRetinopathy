@@ -4,29 +4,30 @@ import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.optimizers import SGD
 
 # config
-batch_size = 10
-num_epochs = 3
+batch_size = 20
+num_epochs = 4
 train_dir = 'data/proc/aug/224/'
 model_name = 'models/h5/simple-cnn-aug.h5'
 
 # construct the model
-model_in = Input(shape=(224,224,3))
-x = Conv2D(16, kernel_size=(7,7), activation='relu')(model_in)
-x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
-x = Conv2D(32, kernel_size=(5,5), activation='relu')(x)
-x = MaxPooling2D(pool_size=(2,2), strides=(2,2))(x)
-x = Flatten()(x)
-x = Dense(256, activation='relu')(x)
-x = Dense(128, activation='relu')(x)
-model_out = Dense(5, activation='softmax')(x)
+# don't put relu on the conv layers!!!!
+model = Sequential([
+	Input(shape=(224,224,3)),
+	Conv2D(16, kernel_size=(7,7)),
+	MaxPooling2D(),
+	Conv2D(32, kernel_size=(5,5)),
+	MaxPooling2D(),
+	Flatten(),
+	Dense(256, activation='relu'),
+	Dense(128, activation='relu'),
+	Dense(5, activation='softmax'),
+])
 
-# create the model
-model = Model(inputs=model_in, outputs=model_out)
-
-train_datagen = ImageDataGenerator(validation_split=0.2)
+train_datagen = ImageDataGenerator(validation_split=0.9)
 
 train_generator = train_datagen.flow_from_directory(
 	train_dir, target_size=(224,224), batch_size=batch_size,
@@ -40,15 +41,42 @@ valid_generator = train_datagen.flow_from_directory(
 	subset='validation'
 )
 
-model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['accuracy'])
+def unonehot (labels):
+	return np.argmax(labels, axis=1)
+def inc (p):
+	return np.append(np.zeros(p) + 1, np.zeros(5-p))
+def incremental (labels):
+	return np.array([inc(np.argmax(labels[y])) for y in range(len(labels))])
+def binary (labels):
+	return np.array([[0,1,0,0,0] if np.argmax(labels[y]) else [1,0,0,0,0] for y in range(len(labels))])
+
+def wrap (gen):
+	while True:
+		try:
+			data, labels = next(gen)
+			yield (data, (labels))
+		except GeneratorExit:
+			raise GeneratorExit
+		except:
+			pass
+
+model.compile(
+	optimizer='adam',#SGD(lr=1e-2, decay=1e-6, momentum=0.9, nesterov=True),
+	loss='categorical_crossentropy', metrics=['accuracy']
+)
+
+# include wrapping, SGD, dropout, and USE GIT
 
 hist = model.fit_generator(
-	generator=train_generator,
-	steps_per_epoch=20, #(train_generator.n // batch_size),
+	generator=(train_generator),
+	steps_per_epoch=(train_generator.n // batch_size),
 	epochs=num_epochs,
-	validation_data=valid_generator,
-	validation_steps=2 #(valid_generator.n // batch_size)
+	#validation_data=(valid_generator),
+	#validation_steps=(valid_generator.n // batch_size)
 )
+
+hist.history.pop('val_loss', None)
+hist.history.pop('loss', None)
 
 print(hist.history)
 
