@@ -41,33 +41,6 @@ def post_process (img, size):
 
 
 
-
-
-# takes a bordersize tuple (t,b,l,r) in pixels
-# adds grey border
-def add_border (img, bordersize):
-	return cv2.copyMakeBorder(
-		img, borderType=cv2.BORDER_CONSTANT,
-		top=bordersize[0], bottom=bordersize[1],
-		left=bordersize[2], right=bordersize[3],
-		value=(128,128,128)
-	)
-
-# crop with bounds checking, if not big enough it adds a grey border
-# doesn't like odd sizes
-def crop_image_bounds_check (img, size):
-	rad = size // 2
-	mx, my = (img.shape[1]//2, img.shape[0]//2)
-	# bounds checking
-	if mx - rad < 0:
-		new_img = add_border(img, (0,0,rad-mx,rad-mx))
-		return crop_image(new_img, rad)
-	if my - rad < 0:
-		new_img = add_border(img, (rad-my,rad-my,0,0))
-		return crop_image(new_img, rad)
-	# crop and return
-	return img[my-rad:my+rad, mx-rad:mx+rad]
-
 def crop_image (img, size):
 	mx, my = (img.shape[1]//2, img.shape[0]//2)
 	rad = size // 2
@@ -120,8 +93,40 @@ def scale_eye_diameter (img, diameter):
 		radius = (edges[-1] - edges[0]) / 2
 	else:
 		radius = np.sum(img.shape[:2]) // 4
+	# exceptionally dark images may evaluate as having tiny radii
 	if radius < min(img.shape[:2]) / 2:
 		radius = min(img.shape[:2]) // 2
 	if radius > (max(img.shape[:2]) + min(img.shape[:2])) / 4:
 		radius = (max(img.shape[:2]) + min(img.shape[:2])) // 4
 	return cv2.resize(img, (0,0), fx=((diameter / 2) / radius), fy=((diameter / 2) / radius))
+
+
+
+
+
+# DEPRECATED
+# takes a bordersize tuple (t,b,l,r) in pixels
+# adds grey border
+def add_border (img, bordersize):
+	return cv2.copyMakeBorder(
+		img, borderType=cv2.BORDER_CONSTANT,
+		top=bordersize[0], bottom=bordersize[1],
+		left=bordersize[2], right=bordersize[3],
+		value=(128,128,128)
+	)
+
+# DEPRECATED
+# crop with bounds checking, if not big enough it adds a grey border
+# doesn't like odd sizes
+def crop_image_bounds_check (img, size):
+	rad = size // 2
+	mx, my = (img.shape[1]//2, img.shape[0]//2)
+	# bounds checking
+	if mx - rad < 0:
+		new_img = add_border(img, (0,0,rad-mx,rad-mx))
+		return crop_image(new_img, rad)
+	if my - rad < 0:
+		new_img = add_border(img, (rad-my,rad-my,0,0))
+		return crop_image(new_img, rad)
+	# crop and return
+	return img[my-rad:my+rad, mx-rad:mx+rad]
