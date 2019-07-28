@@ -27,7 +27,7 @@ model = Sequential([
 	Dense(5, activation='relu')
 ])
 
-train_datagen = ImageDataGenerator(validation_split=0.8)
+train_datagen = ImageDataGenerator(validation_split=0.8, rescale=1.0/255)
 
 train_generator = train_datagen.flow_from_directory(
 	train_dir, target_size=(224,224), batch_size=batch_size,
