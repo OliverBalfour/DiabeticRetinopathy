@@ -10,7 +10,7 @@ from dataframes import get_train_df_old, get_train_df_new
 train_df_new = get_train_df_new()
 train_df_old = get_train_df_old()
 sizes = (224,) #299)
-class_size = 1000 # 5K images overall
+class_size = 1000 # 5K images overall per dataset
 
 
 def map_df (df, dirname):
@@ -20,13 +20,12 @@ def map_df (df, dirname):
 	return mappings
 
 # augmenting includes rotating, flipping, changing colors, and blurring a little
-
+# rotations exclude 20 degrees either side of the image
 seq = iaa.Sequential([
 	iaa.Fliplr(0.5),
-	iaa.Flipud(0.5),
-	iaa.Affine(rotate=(-45, 45)),
-	iaa.Sometimes(0.25, iaa.GaussianBlur(sigma=(0, 0.25))),
-	iaa.Sometimes(0.25, iaa.ContrastNormalization((0.8, 1.2))),
+	iaa.Affine(rotate=(160, -160), scale=(1.0, 1.2)),
+	iaa.Sometimes(0.25, iaa.GaussianBlur(sigma=(0, 0.5))),
+	iaa.ContrastNormalization((0.9, 1.1)),
 	iaa.Multiply((0.5, 1.4))
 ], random_order=True)
 
@@ -69,6 +68,6 @@ def generate_augmentations (mapping, class_size=class_size):
 		process_class_augmentations(samples, class_size)
 
 generate_augmentations(map_df(train_df_new, 'data/proc/aug/'))
-# generate_augmentations(map_df(train_df_old, 'data/aug_old/'))
-
-print('\nAugmented training images.')
+print('\nAugmented new training images.')
+generate_augmentations(map_df(train_df_old, 'data/proc/aug/'))
+print('\nAugmented old training images.')

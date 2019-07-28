@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
-from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten
+from tensorflow.keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.optimizers import SGD
 
 # config
-batch_size = 20
-num_epochs = 4
+batch_size = 50
+num_epochs = 5
 train_dir = 'data/proc/aug/224/'
 model_name = 'models/h5/simple-cnn-aug.h5'
 
@@ -22,12 +22,14 @@ model = Sequential([
 	Conv2D(32, kernel_size=(5,5)),
 	MaxPooling2D(),
 	Flatten(),
+	Dense(512, activation='relu'),
+	Dropout(0.4),
 	Dense(256, activation='relu'),
-	Dense(128, activation='relu'),
-	Dense(5, activation='softmax'),
+	Dropout(0.4),
+	Dense(5, activation='softmax')
 ])
 
-train_datagen = ImageDataGenerator(validation_split=0.9)
+train_datagen = ImageDataGenerator(validation_split=0.1)
 
 train_generator = train_datagen.flow_from_directory(
 	train_dir, target_size=(224,224), batch_size=batch_size,
@@ -71,8 +73,8 @@ hist = model.fit_generator(
 	generator=(train_generator),
 	steps_per_epoch=(train_generator.n // batch_size),
 	epochs=num_epochs,
-	#validation_data=(valid_generator),
-	#validation_steps=(valid_generator.n // batch_size)
+	validation_data=(valid_generator),
+	validation_steps=(valid_generator.n // batch_size)
 )
 
 hist.history.pop('val_loss', None)
@@ -80,4 +82,15 @@ hist.history.pop('loss', None)
 
 print(hist.history)
 
+print('Trn Acc: ' + str(hist.history['acc'][-1]))
+print('Val Acc: ' + str(hist.history['val_acc'][-1]))
+num = [len(os.listdir(train_dir + str(cid))) for cid in range(5)]
+print('Ran Acc: ' + str(max(num)/np.sum(num)))
+
 model.save(model_name)
+
+if input('plot? y/n: ') == 'y':
+	import matplotlib.pyplot as plt
+	plt.plot(np.arange(num_epochs), hist.history['acc'], 'r-')
+	plt.plot(np.arange(num_epochs), hist.history['val_acc'], 'b-')
+	plt.show()
