@@ -83,12 +83,10 @@ hist = model.fit_generator(
 	verbose=1
 )
 
-print(hist.history)
-print('Trn Acc: ' + str(hist.history['acc'][-1]))
-print('Val Acc: ' + str(hist.history['val_acc'][-1]))
+#model.save(model_name)
 
-num = [len(os.listdir(train_dir + str(cid))) for cid in range(5)]
-
-print('Ran Acc: ' + str(max(num)/np.sum(num)))
-
-model.save(model_name)
+#if input('plot? y/n: ') == 'y':
+#	import matplotlib.pyplot as plt
+#	plt.plot(np.arange(num_epochs), hist.history['acc'], 'r-')
+#	plt.plot(np.arange(num_epochs), hist.history['val_acc'], 'b-')
+#	plt.show()
