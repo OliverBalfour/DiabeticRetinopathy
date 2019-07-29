@@ -111,11 +111,20 @@ def scale_eye_diameter (img, diameter):
 
 print('Preprocessing testing images')
 
+# process an image and save it in each specified size
+def process_image (read, write, sizes):
+	if isinstance(read, str):
+		img = cv2.imread(read)
+	else:
+		img = np.array(read)
+	img = process(img)
+	for size in sizes:
+		cv2.imwrite(write, post_process(img, size))
+
 def iterate_df (df, dirname):
 	for row in df.itertuples():
 		try:
 			process_image(row.path, f'{dirname}/{row.id_code}.png', sizes)
-			print('.', end='', flush=True)
 		except Exception as err:
 			print(row.path)
 			print(err)
@@ -142,6 +151,7 @@ test_generator = test_datagen.flow_from_directory(
 
 print('Computing predictions')
 
+# could corruption cause mismatches?
 probabilities = model.predict_generator(test_generator)
 
 print('Saving predictions and cleaning filesystem')

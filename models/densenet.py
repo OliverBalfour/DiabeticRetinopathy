@@ -33,7 +33,7 @@ def getsubset (gen, subset):
 		subset=subset
 	)
 
-train_datagen = ImageDataGenerator(validation_split=0.1, rescale=1.0/255)
+train_datagen = ImageDataGenerator(validation_split=0.1, rescale=1.0/255, preprocessing_function=preprocess_input)
 train_generator = getsubset(train_datagen, 'training')
 valid_generator = getsubset(train_datagen, 'validation')
 

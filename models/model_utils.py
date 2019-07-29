@@ -36,13 +36,14 @@ def gen_wrapper (gen):
 			pass
 
 # process all classes and generate X, Y
-def process_model (model, modelname, image_size, preprocess=None, postprocess=None, max_steps=5000):
+def process_model (model, modelname, tdir, image_size, preprocess=None, postprocess=None, max_steps=5000):
 	for cid in range(5):
-		process_class(model, modelname, 4-cid, image_size, preprocess=preprocess, postprocess=postprocess, max_steps=max_steps)
+		process_class(model, modelname, tdir, 4-cid, image_size, preprocess=preprocess, postprocess=postprocess, max_steps=max_steps)
 	generate_xy(modelname)
 
 # processes a class on a model and saves to data/vectors/model/0-4.npy
-def process_class (model, modelname, cid, image_size, preprocess=None, postprocess=None, max_steps=None):
+# data processing must be EXACTLY THE SAME as in training: abstract away image loading and processing perhaps?
+def process_class (model, modelname, tdir, cid, image_size, preprocess=None, postprocess=None, max_steps=None):
 	if preprocess is None:
 		preprocess = lambda x: x
 
@@ -53,7 +54,7 @@ def process_class (model, modelname, cid, image_size, preprocess=None, postproce
 		preprocessing_function=preprocess
 	)
 	generator_flow = data_generator.flow_from_directory(
-		f'data/proc/{str(image_size)}/', target_size=(image_size,image_size), batch_size=1, # must be 1 for the broken image handling to work nicely
+		tdir, target_size=(image_size,image_size), batch_size=1, # must be 1 for the broken image handling to work nicely
 		class_mode='categorical', shuffle=True, color_mode='rgb',
 		classes=[str(cid)]
 	)
