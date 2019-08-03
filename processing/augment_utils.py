@@ -21,7 +21,8 @@ def map_df (df, dirname, binary=False):
 def get_augment_seq ():
 	return iaa.Sequential([
 		iaa.Fliplr(0.5),
-		iaa.Affine(rotate=(160, -160), scale=(1.0, 1.2)),
+		iaa.Flipud(0.5),
+		iaa.Affine(rotate=(20, -20), scale=(1.0, 1.2)),
 		iaa.Sometimes(0.25, iaa.GaussianBlur(sigma=(0, 0.5))),
 		iaa.ContrastNormalization((0.9, 1.1)),
 		iaa.Multiply((0.5, 1.4))
@@ -45,6 +46,7 @@ def epoch (samples, seq, sizes, stop=None):
 
 # samples should be shuffled
 def process_class_augmentations (samples, class_size, seq, sizes):
+	if len(samples) == 0: return
 	# copy over max(class_size, len(samples)) images
 	for sample in samples[:class_size]:
 		if not os.path.isfile(sample[1]):
@@ -68,17 +70,25 @@ def generate_augmentations (mapping, seq, class_size=1000, sizes=(224,)):
 # generate test set and return list of files used to remove from dataframes
 def process_test_set (mapping, seq, class_size=1000, sizes=(224,)):
 	used = []
+	needed = class_size
+	# if files are already present in test dir don't regenerate them
+	for samples in mapping:
+		for sample in samples:
+			if os.path.isfile(sample[1].replace('[SIZE]', str(sizes[0]))):
+				used.append(sample[0].split('/')[-1])
+				needed -= 1
+	# copy over images
 	for cid, samples in enumerate(mapping):
 		samples = samples.copy()
 		random.shuffle(samples)
 		# copy over max(class_size, len(samples)) images
-		for sample in samples[:class_size]:
+		for sample in samples[:needed]:
 			process_image(sample[0], sample[1], sizes)
-			used.append(sample[0])
+			used.append(sample[0].split('/')[-1])
 	return used
 
 # remove test set from dataframe and return new df
 def remove_used (df, used):
 	return df.drop(df[
-		df['path'].map(lambda x: x in used)
+		df['path'].map(lambda x: x.split('/')[-1] in used)
 	].index)
