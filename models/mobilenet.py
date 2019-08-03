@@ -17,6 +17,6 @@ model = SequentialConstructor([
 	Dense(5, activation='softmax')
 ], output_shape=(5,))
 
-hist = evaluate(model, model_name='mobilenet-test')
+hist = evaluate(model, model_name='mobilenet-binary', num_epochs=10, train_dir='data/proc/binary/train/224/')
 
 pretty_print_history(hist)

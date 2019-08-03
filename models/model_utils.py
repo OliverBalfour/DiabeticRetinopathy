@@ -10,14 +10,13 @@ from tensorflow.keras.layers import Input, Dense
 
 ### MODEL RELATED
 
-train_dir = 'data/proc/aug/224/'
 image_shape = (224,224,3)
 
 # takes compiled model, trains it, and saves it and returns history
 def evaluate (
 		model,
 		model_name='model-'+str(np.random.randint(1e8,1e9)),
-		train_dir=train_dir,
+		train_dir=None,
 		num_epochs=15, batch_size=10,
 		image_shape=image_shape,
 		preprocessing_function=keras.applications.densenet.preprocess_input

@@ -14,8 +14,8 @@ model = SequentialConstructor([
 	Dropout(0.5),
 	Dense(256, activation='relu'),
 	Dropout(0.5),
-], output_shape=(5,))
+], output_shape=(2,))
 
-hist = evaluate(model, model_name='densenet121-test')
+hist = evaluate(model, model_name='densenet121-binary', train_dir='data/proc/binary/train/224/')
 
 pretty_print_history(hist)
