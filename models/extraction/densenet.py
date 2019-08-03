@@ -37,6 +37,8 @@ _________________________________________________________________
 """
 
 
+# does .get_layer return a layer from densenet121?
+
 base_model = keras.models.load_model('models/h5/densenet121-categorical.h5')
 model = Model(inputs=base_model.input, outputs=base_model.get_layer('dense').output)
 

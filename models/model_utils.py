@@ -1,7 +1,75 @@
 
 import numpy as np
 import os
+import tensorflow.keras as keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications.densenet import preprocess_input # imagenet processing
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Input, Dense
+
+
+### MODEL RELATED
+
+train_dir = 'data/proc/aug/224/'
+image_shape = (224,224,3)
+
+# takes compiled model, trains it, and saves it and returns history
+def evaluate (
+		model,
+		model_name='model-'+str(np.random.randint(1e8,1e9)),
+		train_dir=train_dir,
+		num_epochs=15, batch_size=10,
+		image_shape=image_shape,
+		preprocessing_function=keras.applications.densenet.preprocess_input
+	):
+
+	train_datagen = ImageDataGenerator(validation_split=0.1, rescale=1.0/255, preprocessing_function=preprocessing_function)
+	train_generator = getsubset(train_datagen, 'training', train_dir, image_shape[0], batch_size)
+	valid_generator = getsubset(train_datagen, 'validation', train_dir, image_shape[0], batch_size)
+
+	history = model.fit_generator(
+		generator=train_generator, steps_per_epoch=(train_generator.n // batch_size),
+		validation_data=valid_generator, validation_steps=(valid_generator.n // batch_size),
+		epochs=num_epochs
+	)
+
+	model.save('models/h5/'+model_name+'.h5')
+
+	return history.history
+
+# wraps a sequential model with the correct input and output shapes and compiles
+def SequentialConstructor (
+		arr, input_shape=image_shape, output_shape=(5,),
+		optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']
+	):
+
+	model = Sequential(
+		[Input(shape=input_shape)] + arr + [Dense(output_shape[0], activation='softmax')]
+	)
+	model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+
+	return model
+
+def pretty_print_history (hist):
+	print(hist)
+	print('Training Accuracy:   ' + str(round(hist['acc'][-1]*100,2))+'%')
+	print('Validation Accuracy: ' + str(round(hist['val_acc'][-1]*100,2))+'%')
+
+# get generator for training/validation subset of ImageDataGenerator
+def getsubset (gen, subset, directory, image_size, batch_size):
+	return gen.flow_from_directory(
+		directory, target_size=(image_size,image_size), batch_size=batch_size,
+		class_mode='categorical', shuffle=True, color_mode='rgb',
+		subset=subset
+	)
+
+
+
+
+
+
+### VECTOR RELATED
+
 
 # takes data/vectors/modelname/0-4.npy and creates X and Y vectors
 def generate_xy (modelname):

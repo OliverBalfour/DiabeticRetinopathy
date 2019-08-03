@@ -102,8 +102,6 @@ def scale_eye_diameter (img, diameter):
 
 
 
-
-
 # DEPRECATED
 # takes a bordersize tuple (t,b,l,r) in pixels
 # adds grey border

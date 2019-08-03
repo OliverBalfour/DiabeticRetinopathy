@@ -9,7 +9,7 @@ from dataframes import get_train_df_new, get_train_df_old
 train_df_new = get_train_df_new()
 train_df_old = get_train_df_old()
 
-sizes = (224, 299)
+sizes = (224,) # 299 as well?
 
 # iterate through training data and process it into folders like ./data/proc/new/224/0/
 def iterate_df (df, dirname):
@@ -22,6 +22,6 @@ def iterate_df (df, dirname):
 			print(err)
 
 iterate_df(train_df_new, 'data/proc/new/')
-# iterate_df(train_df_old, 'data/proc/old/')
+iterate_df(train_df_old, 'data/proc/old/')
 
 print('\nPreprocessed training images.')

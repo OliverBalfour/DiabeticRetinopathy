@@ -35,12 +35,12 @@ All data is preprocessed and stored in data/proc/{size \\in {224,299}}/{class \\
 
 Download data, preprocess, augment, train models, train stacked models, etc.
 
-0. `setup.sh` to download data
+0. `setup.sh` to download data and generate filesystem
 0. `python3 processing/preprocess.py` to preprocess it
-0. `python3 processing/augment.py` to augment it
 0. `python3 processing/corruption-checker.py` and delete all corrupt images (in 224 and 299 dirs)
-0. `python3 models/train/simple-cnn.py` to train main CNN
+0. `python3 processing/augment.py` to augment it and generate datasets
+0. `python3 models/densenet.py` to train main CNN (TODO: interface for training all CNNs on severity and binary datasets)
 0. `python3 models/extraction/*.py` to extract features using all CNNs
-0. `python3 models/train/*.py` to train other models stacked on CNN filters
+0. `python3 models/stacked/*.py` to train other models stacked on CNN filters
 
 TODO: Once the pipeline is complete, run `python3 models/evaluate.py filename.png/jpg` to get a prediction for a single image.
