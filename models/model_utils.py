@@ -13,6 +13,7 @@ from tensorflow.keras.layers import Input, Dense
 image_shape = (224,224,3)
 
 # takes compiled model, trains it, and saves it and returns history
+# if a small number of epochs is used models may be loaded and re-evaluated as needed
 def evaluate (
 		model,
 		model_name='model-'+str(np.random.randint(1e8,1e9)),

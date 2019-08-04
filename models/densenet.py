@@ -13,7 +13,7 @@ model = SequentialConstructor([
 	Dense(512, activation='relu'),
 	Dropout(0.5),
 	Dense(256, activation='relu'),
-	Dropout(0.5),
+	Dropout(0.5)
 ], output_shape=(2,))
 
 hist = evaluate(model, model_name='densenet121-binary', train_dir='data/proc/binary/train/224/')
