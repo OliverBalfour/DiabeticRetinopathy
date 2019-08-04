@@ -44,16 +44,28 @@ def SequentialConstructor (
 	):
 
 	model = Sequential(
-		[Input(shape=input_shape)] + arr + [Dense(output_shape[0], activation='softmax')]
+		[Input(shape=input_shape)] + flatten(arr) + [Dense(output_shape[0], activation='softmax')]
 	)
 	model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 
 	return model
 
+def flatten (arr):
+	newarr = []
+	for el in arr:
+		if type(el) is list or type(el) is tuple:
+			for t in flatten(el):
+				newarr.append(t)
+		else:
+			newarr.append(el)
+	return newarr
+
 def pretty_print_history (hist):
 	print(hist)
 	print('Training Accuracy:   ' + str(round(hist['acc'][-1]*100,2))+'%')
 	print('Validation Accuracy: ' + str(round(hist['val_acc'][-1]*100,2))+'%')
+	with open('tmp', 'w+') as f:
+		f.write(str(hist))
 
 # get generator for training/validation subset of ImageDataGenerator
 def getsubset (gen, subset, directory, image_size, batch_size):
