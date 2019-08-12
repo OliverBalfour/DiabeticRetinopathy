@@ -83,7 +83,7 @@ def getsubset (gen, subset, directory, image_size, batch_size):
 
 
 # takes data/vectors/modelname/0-4.npy and creates X and Y vectors
-def generate_xy (modelname):
+def generate_xy (modelname, binary=False):
 	vdir = 'data/vectors/'+modelname+'/'
 	files = os.listdir(vdir)
 	if 'X.npy' in files: files.remove('X.npy')
@@ -91,10 +91,10 @@ def generate_xy (modelname):
 	ndarrays = [np.load(vdir+fname) for fname in files]
 	X = np.concatenate(ndarrays)
 	class_ids = [int(fname[0]) for fname in files]
-	Y = np.concatenate([np.zeros((len(ndarrays[cid]), 5)) + cid for cid in class_ids])
+	Y = np.concatenate([np.zeros((len(ndarrays[cid]), 5 if not binary else 2)) + cid for cid in class_ids])
 	for i in range(Y.shape[0]):
 		cid = int(Y[i,0])
-		Y[i] = np.zeros(5)
+		Y[i] = np.zeros(5 if not binary else 2)
 		Y[i,cid] = 1
 	np.save(vdir+'X.npy', X)
 	np.save(vdir+'Y.npy', Y)
@@ -115,10 +115,10 @@ def gen_wrapper (gen):
 			pass
 
 # process all classes and generate X, Y
-def process_model (model, modelname, tdir, image_size, preprocess=None, postprocess=None, max_steps=5000):
-	for cid in range(5):
-		process_class(model, modelname, tdir, 4-cid, image_size, preprocess=preprocess, postprocess=postprocess, max_steps=max_steps)
-	generate_xy(modelname)
+def process_model (model, modelname, tdir, image_size, preprocess=None, postprocess=None, max_steps=5000, binary=False):
+	for cid in range(5 if not binary else 2):
+		process_class(model, modelname, tdir, cid, image_size, preprocess=preprocess, postprocess=postprocess, max_steps=max_steps)
+	generate_xy(modelname, binary=binary)
 
 # processes a class on a model and saves to data/vectors/model/0-4.npy
 # data processing must be EXACTLY THE SAME as in training: abstract away image loading and processing perhaps?
@@ -140,8 +140,8 @@ def process_class (model, modelname, tdir, cid, image_size, preprocess=None, pos
 	generator = gen_wrapper(generator_flow)
 	tensors = model.predict_generator(
 		generator, verbose=1,
-		steps=min(len(generator_flow), max_steps),
-		max_queue_size=1
+		steps=max_steps,
+		#max_queue_size=1
 	)
 
 	if postprocess is not None:

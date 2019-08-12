@@ -40,10 +40,11 @@ _________________________________________________________________
 # does .get_layer return a layer from densenet121?
 
 base_model = keras.models.load_model('models/h5/densenet121-categorical.h5')
-model = Model(inputs=base_model.input, outputs=base_model.get_layer('dense').output)
+model = Model(inputs=base_model.input, outputs=base_model.get_layer('dense_2').output)
 
 print('Loaded model. Processing...')
-process_model(model, 'densenet121', 'data/proc/aug/224/', 224, preprocess=preprocess_input, max_steps=8000)
+process_model(model, 'densenet121', 'data/proc/binary/train/224/', 224, preprocess=preprocess_input, max_steps=100, binary=True)
+# process_model(model, 'densenet121-test', 'data/proc/binary/test/224/', 224, preprocess=preprocess_input, max_steps=8000, binary=True)
 
 # from models.model_utils import load_xy
 # from models.stacked.ann import train as tr
