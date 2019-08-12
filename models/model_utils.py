@@ -42,7 +42,6 @@ def SequentialConstructor (
 		arr, input_shape=image_shape, output_shape=(5,),
 		optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']
 	):
-
 	model = Sequential(
 		[Input(shape=input_shape)] + flatten(arr) + [Dense(output_shape[0], activation='softmax')]
 	)

@@ -17,16 +17,16 @@ def shapify (data):
 	else:
 		return (data, data)
 
-def Conv2DLayer (filters=None, input_shape=None, kernel_size=None, strides=1, pool_size=2, pool_strides=2, activation=None, batchnorm=False, pooling=True):
-	layers = [Conv2D(filters=filters, input_shape=input_shape, kernel_size=shapify(kernel_size), strides=shapify(strides), activation=activation)]
+def Conv2DLayer (filters=None, kernel_size=None, strides=1, pool_size=2, pool_strides=2, activation=None, batchnorm=False, pooling=True):
+	layers = [Conv2D(filters=filters, kernel_size=shapify(kernel_size), strides=shapify(strides), activation=activation)]
 	if pooling:
 		layers.append(MaxPooling2D(pool_size=shapify(pool_size), strides=shapify(pool_strides)))
 	if batchnorm:
 		layers.append(BatchNormalization())
 	return layers
 
-def DenseLayer (units, input_shape=None, activation='relu', dropout=0, batchnorm=False):
-	layers = [Dense(units, input_shape=input_shape, activation=activation)]
+def DenseLayer (units, activation='relu', dropout=0, batchnorm=False):
+	layers = [Dense(units, activation=activation)]
 	if dropout:
 		layers.append(Dropout(dropout))
 	if batchnorm:
@@ -36,12 +36,12 @@ def DenseLayer (units, input_shape=None, activation='relu', dropout=0, batchnorm
 model = SequentialConstructor([
 	*Conv2DLayer(filters=96, kernel_size=11, strides=4, batchnorm=True),
 	*Conv2DLayer(filters=256, kernel_size=11,strides=1, batchnorm=True),
-	*Conv2DLayer(filters=384, kernel_size=3, strides=1, pooling=False, batchnorm=True),
-	*Conv2DLayer(filters=384, kernel_size=3, strides=1, pooling=False, batchnorm=True),
-	*Conv2DLayer(filters=384, kernel_size=3, strides=1, pooling=False, batchnorm=True),
-	*Conv2DLayer(filters=256, kernel_size=3, strides=1, batchnorm=True),
+	*Conv2DLayer(filters=384, kernel_size=3, strides=1, pooling=False),
+	*Conv2DLayer(filters=384, kernel_size=3, strides=1, pooling=False),
+	*Conv2DLayer(filters=256, kernel_size=3, strides=1),
+	GlobalAveragePooling2D(),
+	BatchNormalization(),
 	Flatten(),
-	*DenseLayer(4096, activation='relu', dropout=0.4, batchnorm=True, input_shape=(224*224*3,)),
 	*DenseLayer(2048, activation='relu', dropout=0.4, batchnorm=True),
 	*DenseLayer(1024, activation='relu', dropout=0.4),
 	*DenseLayer(512, activation='relu')
