@@ -6,13 +6,9 @@ from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
 from tensorflow.keras.optimizers import SGD
 from sklearn.model_selection import train_test_split
 
-# use batch norm and dropout
-# write Model class
-# implement train(X,Y) and predict(x)
-# subclass for all methods
+# implement predict(x)
 
-# no dropout seems to radically boost perf, is this correct?
-def train (X, Y, source, valid=None):
+def train (X, Y, source):
 	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.1, shuffle=True)
 	model = Sequential([
 		Input(shape=X.shape[1:]),

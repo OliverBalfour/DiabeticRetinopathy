@@ -27,8 +27,11 @@ mkdir -p data/proc/binary/test/224/0
 mkdir -p data/proc/binary/test/224/1
 
 mkdir -p data/vectors/mobilenet
-mkdir -p data/vectors/nasnet
-mkdir -p data/vectors/inception-resnet
+mkdir -p data/vectors/mobilenet-test
+mkdir -p data/vectors/mobilenet-cat
+mkdir -p data/vectors/mobilenet-cat-test
+mkdir -p data/vectors/densenet
+mkdir -p data/vectors/densenet-test
 
 echo "Done making directories"
 echo "Make sure the kaggle CLI is installed, downloading and unzipping now:"
