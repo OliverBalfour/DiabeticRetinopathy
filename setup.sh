@@ -30,8 +30,8 @@ mkdir -p data/vectors/mobilenet
 mkdir -p data/vectors/mobilenet-test
 mkdir -p data/vectors/mobilenet-cat
 mkdir -p data/vectors/mobilenet-cat-test
-mkdir -p data/vectors/densenet
-mkdir -p data/vectors/densenet-test
+mkdir -p data/vectors/densenet121
+mkdir -p data/vectors/densenet121-test
 
 echo "Done making directories"
 echo "Make sure the kaggle CLI is installed, downloading and unzipping now:"
