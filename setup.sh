@@ -29,7 +29,6 @@ mkdir -p data/proc/binary/test/224/1
 mkdir -p data/vectors/mobilenet
 mkdir -p data/vectors/mobilenet-test
 mkdir -p data/vectors/mobilenet-cat
-mkdir -p data/vectors/mobilenet-cat-test
 mkdir -p data/vectors/densenet121
 mkdir -p data/vectors/densenet121-test
 

@@ -10,7 +10,7 @@ Install `conda`, then:
 conda install python=3.7
 conda create --name PythonGPU
 conda activate PythonGPU
-conda install -c anaconda numpy jupyter matplotlib seaborn pandas scikit-learn tensorflow-gpu cuda-toolkit=9.0
+conda install -c anaconda numpy jupyter matplotlib seaborn pandas scikit-learn tensorflow-gpu cuda-toolkit=9.0 py-xgboost-gpu
 conda install notebook ipykernel
 ipython kernel install --user --name=PythonGPU
 jupyter notebook

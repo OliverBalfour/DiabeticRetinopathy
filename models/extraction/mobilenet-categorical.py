@@ -1,4 +1,6 @@
 
+# DEPRECATED
+
 import os, sys
 import numpy as np
 import tensorflow as tf
@@ -13,4 +15,4 @@ base_model = keras.models.load_model('models/h5/mobilenet-categorical.h5')
 model = Model(inputs=base_model.input, outputs=base_model.get_layer('batch_normalization').output)
 
 print('Loaded model. Processing...')
-process_model(model, 'mobilenet-cat', 'data/proc/categorical/train/224/', 224, preprocess=preprocess_input, max_steps=8000, binary=False)
+process_model(model, 'mobilenet-cat', 'data/proc/severity/train/224/', 224, preprocess=preprocess_input, max_steps=8000, binary=False)

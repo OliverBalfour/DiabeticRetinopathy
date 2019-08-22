@@ -1,4 +1,6 @@
 
+# ARTIFICIAL NEURAL NETWORK
+
 import numpy as np
 
 from tensorflow.keras.models import Sequential
@@ -8,17 +10,22 @@ from sklearn.model_selection import train_test_split
 
 # implement predict(x)
 
-def train (X, Y, source):
+def DenseLayer (layers):
+	l = []
+	for k in range(layers):
+		l += [
+			Dense(256, activation='relu'),
+			BatchNormalization(),
+			Dropout(0.4)
+		]
+	return l
+
+def train (X, Y, source, nonbinary=False):
 	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.1, shuffle=True)
 	model = Sequential([
 		Input(shape=X.shape[1:]),
-#		Dense(256, activation='relu'),
-#		BatchNormalization(),
-#		Dropout(0.4),
-		Dense(256, activation='relu'),
-		BatchNormalization(),
-		Dropout(0.4),
-		Dense(2, activation='softmax')
+		*DenseLayer(2 if nonbinary else 1),
+		Dense(5 if nonbinary else 2, activation='softmax')
 	])
 
 	model.summary()
@@ -32,7 +39,7 @@ def train (X, Y, source):
 	history = model.fit(
 		Xt, Yt,
 		batch_size=50,
-		epochs=5,
+		epochs=2,
 		steps_per_epoch=(X.shape[0] // 50),
 		verbose=1,
 		shuffle=True,
@@ -42,5 +49,5 @@ def train (X, Y, source):
 	model.save(f'models/h5/ANN-{source}.h5')
 
 	print(history.history['acc'][-1])
-	if 'val_acc' in history.history.keys(): print(history.history['val_acc'][-1])
-	return history.history
+	print(history.history['val_acc'][-1])
+	return history.history['val_acc'][-1]
