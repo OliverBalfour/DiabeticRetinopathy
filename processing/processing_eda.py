@@ -55,8 +55,8 @@ def exemplar_stages ():
 		bottom=0.05,
 		left=0.07,
 		right=0.95,
-		hspace=0.3,
-		wspace=0.2
+		hspace=0.06,
+		wspace=0.05
 	)
 
 def augmentations ():
@@ -100,7 +100,7 @@ def low_quality_stages ():
 		for y, fname in enumerate(col):
 			images[y][x] = proc[0]('images/overunder/' + fname)
 	draw_samples(
-		images, ['Original', 'Processed'], ['']*cols, figsize=((16, 4)),
+		images, ['Original', 'Processed'], ['']*cols, figsize=((16, 6)),
 		top=0.95,
 		bottom=0.05,
 		left=0.03,
@@ -110,7 +110,7 @@ def low_quality_stages ():
 	)
 
 
-exemplar_stages()
-augmentations()
-misclassified()
+# exemplar_stages()
+# augmentations()
+# misclassified()
 low_quality_stages()
