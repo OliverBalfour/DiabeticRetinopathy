@@ -14,7 +14,7 @@ def getmat (m, n):
 	return np.zeros((m, n), dtype='int').tolist()
 
 # 2d array of 3d tensors (img sizes may differ)
-def draw_samples (images, ylabels, xlabels, figsize=(12, 9)):
+def draw_samples (images, ylabels, xlabels, figsize=(12, 9), **kwargs):
 	fig = plt.figure(figsize=figsize)
 
 	rows = len(images)
@@ -22,21 +22,14 @@ def draw_samples (images, ylabels, xlabels, figsize=(12, 9)):
 
 	for row in range(rows):
 		for col in range(cols):
-			ax = fig.add_subplot(rows, cols, row * rows + col + 1, xticks=[], yticks=[])
+			# print(row * rows + col + 1)
+			ax = fig.add_subplot(rows, cols, row * cols + col + 1, xticks=[], yticks=[])
 			plt.imshow(images[row][col] / 255)
 			if row == 0:
 				ax.set_title(xlabels[col])
 			if col == 0:
 				ax.set_ylabel(ylabels[row])
-
-	plt.subplots_adjust(
-		top=0.92,
-		bottom=0.05,
-		left=0.07,
-		right=0.95,
-		hspace=0.3,
-		wspace=0.2
-	)
+	plt.subplots_adjust(**kwargs)
 	plt.show()
 
 proc = [
@@ -56,23 +49,68 @@ def exemplar_stages ():
 		for col, fn in enumerate(proc):
 			img = fn(img)
 			images[row][col] = img
-	draw_samples(images, class_names, stage_names)
+	draw_samples(
+		images, class_names, stage_names,
+		top=0.92,
+		bottom=0.05,
+		left=0.07,
+		right=0.95,
+		hspace=0.3,
+		wspace=0.2
+	)
 
-# broken atm
 def augmentations ():
-	images = getmat(2,4)
+	images = getmat(1,4)
 	fnames = sorted(os.listdir('images/augmentations'))
-	for i, fname in enumerate(fnames):
-		img = 'images/augmentations/' + fname
-		images[i % 2][i // 2] = proc[0](img)
-	print(images)
-	draw_samples(images, ['']*2, ['']*4, figsize=((12, 4)))
+	for x, fname in enumerate(fnames):
+		images[0][x] = proc[0](f'images/augmentations/{fname}')
+	draw_samples(
+		images, [''], ['Original', 'Augmentation 1', 'Augmentation 2', 'Augmentation 3'], figsize=((16, 4.5)),
+		top=0.93,
+		bottom=0.05,
+		left=0.03,
+		right=0.97,
+		hspace=0.3,
+		wspace=0.1
+	)
 
 def misclassified ():
-	pass
+	fnames = sorted(os.listdir('images/bad-labels'))
+	images = getmat(2, len(fnames)//2)
+	fnames = [[fnames[i], fnames[i+1]] for i in range(0, len(fnames), 2)]
+	for x, col in enumerate(fnames):
+		for y, fname in enumerate(col):
+			images[y][x] = proc[0]('images/bad-labels/' + fname)
+	draw_samples(
+		images, ['Original', 'Processed'], ['No Retinopathy', 'No Retinopathy', 'Proliferative'], figsize=((12, 6)),
+		top=0.92,
+		bottom=0.05,
+		left=0.07,
+		right=0.95,
+		hspace=0.1,
+		wspace=0.2
+	)
 
 def low_quality_stages ():
-	pass
+	fnames = sorted(os.listdir('images/overunder'))
+	cols = len(fnames)//2
+	images = getmat(2, cols)
+	fnames = [[fnames[i], fnames[i+1]] for i in range(0, len(fnames), 2)]
+	for x, col in enumerate(fnames):
+		for y, fname in enumerate(col):
+			images[y][x] = proc[0]('images/overunder/' + fname)
+	draw_samples(
+		images, ['Original', 'Processed'], ['']*cols, figsize=((16, 4)),
+		top=0.95,
+		bottom=0.05,
+		left=0.03,
+		right=0.98,
+		hspace=0.05,
+		wspace=0.2
+	)
 
 
+exemplar_stages()
 augmentations()
+misclassified()
+low_quality_stages()
