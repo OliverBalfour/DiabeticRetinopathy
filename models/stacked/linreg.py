@@ -1,25 +1,29 @@
 
 # LINEAR REGRESSION (LINREG)
 
+from base_model import BaseModel
+
 import numpy as np
 from sklearn import metrics
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import GridSearchCV, train_test_split
-import pickle
 
-def train (X, Y, source):
-	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.2, shuffle=True)
-	Yt = np.argmax(Yt, axis=1)
-	Yv = np.argmax(Yv, axis=1)
+class Model (BaseModel):
+	def __init__ (self):
+		super().__init__('LINREG')
 
-	model = LinearRegression(n_jobs=-1)
-	model.fit(Xt, Yt)
-	print('fit models')
+	def train (self, X, Y, verbose=False):
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, onehot=False)
 
-	pred = np.round(model.predict(Xv))
-	acc = metrics.accuracy_score(Yv, pred)
-	print('Acc: ' + str(acc))
+		model = LinearRegression(verbose=verbose, n_jobs=-1)
+		model.fit(Xt, Yt)
+		if verbose: print('fit models')
 
-	pickle.dump(model, open(f'models/h5/LINREG-{source}.save', 'wb'))
+		pred = np.round(model.predict(Xv))
+		acc = metrics.accuracy_score(Yv, pred)
+		if verbose: print('Acc: ' + str(acc))
 
-	return acc
+		self.src = model
+		self.acc = acc
+
+	def predict (self, X):
+		return self.src.predict(X)

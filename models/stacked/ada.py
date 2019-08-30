@@ -1,33 +1,34 @@
 
 # ADAPTIVE BOOSTING (ADABOOST)
 
+from base_model import BaseModel
+
 import numpy as np
 from sklearn import metrics
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import GridSearchCV, train_test_split
-import pickle
 
-def train (X, Y, source):
-	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.2, shuffle=True)
-	Yt = np.argmax(Yt, axis=1)
-	Yv = np.argmax(Yv, axis=1)
+class Model (BaseModel):
+	def __init__ (self):
+		super().__init__('ADA')
 
-	params = {
-		"n_estimators": [30]
-	}
+	def train (self, X, Y, verbose=False):
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, onehot=False)
 
-	models = GridSearchCV(AdaBoostClassifier(), params, verbose=1)
-	models.fit(Xt, Yt)
-	print('fit models')
+		models = GridSearchCV(AdaBoostClassifier(), { "n_estimators": [30] }, verbose=verbose)
+		models.fit(Xt, Yt)
+		if verbose: print('fit models')
 
-	best = models.best_estimator_
-	best.fit(Xt, Yt)
-	print('fit best model')
+		best = models.best_estimator_
+		best.fit(Xt, Yt)
+		if verbose: print('fit best model')
 
-	pred = best.predict(Xv)
-	acc = metrics.accuracy_score(Yv, pred)
-	print('Acc: ' + str(acc))
+		pred = best.predict(Xv)
+		acc = metrics.accuracy_score(Yv, pred)
+		if verbose: print('Acc: ' + str(acc))
 
-	pickle.dump(best, open(f'models/h5/ADA-{source}.save', 'wb'))
+		self.src = best
+		self.acc = acc
 
-	return acc
+	def predict (self, X):
+		return self.src.predict(X)

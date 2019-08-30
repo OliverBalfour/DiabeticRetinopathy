@@ -1,53 +1,46 @@
 
 # ARTIFICIAL NEURAL NETWORK
 
+from base_model import BaseModel
 import numpy as np
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
-from tensorflow.keras.optimizers import SGD
-from sklearn.model_selection import train_test_split
 
-# implement predict(x)
+class Model (BaseModel):
+	def __init__ (self):
+		super().__init__('ANN')
 
-def DenseLayer (layers):
-	l = []
-	for k in range(layers):
-		l += [
+	def train (self, X, Y, verbose=False):
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y)
+		model = Sequential([
+			Input(shape=X.shape[1:]),
 			Dense(256, activation='relu'),
 			BatchNormalization(),
-			Dropout(0.4)
-		]
-	return l
+			Dropout(0.4),
+			Dense(2, activation='softmax')
+		])
 
-def train (X, Y, source, nonbinary=False):
-	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.1, shuffle=True)
-	model = Sequential([
-		Input(shape=X.shape[1:]),
-		*DenseLayer(2 if nonbinary else 1),
-		Dense(5 if nonbinary else 2, activation='softmax')
-	])
+		if verbose: model.summary()
 
-	model.summary()
+		model.compile(
+			loss='categorical_crossentropy',
+			optimizer='adam',
+			metrics=['accuracy']
+		)
 
-	model.compile(
-		loss='categorical_crossentropy',
-		optimizer='adam',
-		metrics=['accuracy']
-	)
+		history = model.fit(
+			Xt, Yt,
+			batch_size=50,
+			epochs=2,
+			steps_per_epoch=(X.shape[0] // 50),
+			verbose=1,
+			shuffle=True,
+			validation_data=(Xv,Yv)
+		)
 
-	history = model.fit(
-		Xt, Yt,
-		batch_size=50,
-		epochs=2,
-		steps_per_epoch=(X.shape[0] // 50),
-		verbose=1,
-		shuffle=True,
-		validation_data=(Xv,Yv)
-	)
+		self.src = model
+		self.acc = history.history['val_acc'][-1]
 
-	model.save(f'models/h5/ANN-{source}.h5')
-
-	print(history.history['acc'][-1])
-	print(history.history['val_acc'][-1])
-	return history.history['val_acc'][-1]
+	def predict (self, X):
+		return self.src.predict(X)

@@ -1,35 +1,40 @@
 
 # K NEAREST NEIGHBOURS (K-NN)
 
+from base_model import BaseModel
+
 import numpy as np
 from sklearn import metrics
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import GridSearchCV, train_test_split
-import pickle
+from sklearn.model_selection import GridSearchCV
 
-def train (X, Y, source):
-	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.5, shuffle=True)
-	Yt = np.argmax(Yt, axis=1)
-	Yv = np.argmax(Yv, axis=1)
+class Model (BaseModel):
+	def __init__ (self):
+		super().__init__('KNN')
 
-	params = {
-		"n_neighbors": [10], # an algorithm called "K" nearest neighbours uses a parameter called 'n_neighbours'... seriously lol?
-		"weights": ["distance"],
-		"metric": ["manhattan"]
-	}
+	def train (self, X, Y, verbose=False):
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, split=0.5, onehot=False)
 
-	models = GridSearchCV(KNeighborsClassifier(n_jobs=-1), params, verbose=1)
-	models.fit(Xt, Yt)
-	print('fit models')
+		params = {
+			"n_neighbors": [10],
+			"weights": ["distance"],
+			"metric": ["manhattan"]
+		}
 
-	best = models.best_estimator_
-	best.fit(Xt, Yt)
-	print('fit best model')
+		models = GridSearchCV(KNeighborsClassifier(n_jobs=-1), params, verbose=verbose)
+		models.fit(Xt, Yt)
+		if verbose: print('fit models')
 
-	pred = best.predict(Xv)
-	acc = metrics.accuracy_score(Yv, pred)
-	print('Acc: ' + str(acc))
+		best = models.best_estimator_
+		best.fit(Xt, Yt)
+		if verbose: print('fit best model')
 
-	pickle.dump(best, open(f'models/h5/KNN-{source}.save', 'wb'))
+		pred = best.predict(Xv)
+		acc = metrics.accuracy_score(Yv, pred)
+		if verbose: print('Acc: ' + str(acc))
 
-	return acc
+		self.src = best
+		self.acc = acc
+
+	def predict (self, X):
+		return self.src.predict(X)

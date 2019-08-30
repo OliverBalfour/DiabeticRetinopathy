@@ -1,35 +1,40 @@
 
 # RANDOM FOREST
 
+from base_model import BaseModel
+
 import numpy as np
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV, train_test_split
-import pickle
+from sklearn.model_selection import GridSearchCV
 
-def train (X, Y, source):
-	Xt, Xv, Yt, Yv = train_test_split(X, Y, test_size=0.2, shuffle=True)
-	Yt = np.argmax(Yt, axis=1)
-	Yv = np.argmax(Yv, axis=1)
+class Model (BaseModel):
+	def __init__ (self):
+		super().__init__('RF')
 
-	params = {
-		"max_depth": [None],
-		"max_features": [200],
-		"n_estimators": [30]
-	}
+	def train (self, X, Y, verbose=False):
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, onehot=False)
 
-	models = GridSearchCV(RandomForestClassifier(verbose=1), params, verbose=1)
-	models.fit(Xt, Yt)
-	print('fit models')
+		params = {
+			"max_depth": [None],
+			"max_features": [200],
+			"n_estimators": [30]
+		}
 
-	best = models.best_estimator_
-	best.fit(Xt, Yt)
-	print('fit best model')
+		models = GridSearchCV(RandomForestClassifier(verbose=verbose), params, verbose=verbose)
+		models.fit(Xt, Yt)
+		if verbose: print('fit models')
 
-	pred = best.predict(Xv)
-	acc = metrics.accuracy_score(Yv, pred)
-	print('Acc: ' + str(acc))
+		best = models.best_estimator_
+		best.fit(Xt, Yt)
+		if verbose: print('fit best model')
 
-	pickle.dump(best, open(f'models/h5/RF-{source}.save', 'wb'))
+		pred = best.predict(Xv)
+		acc = metrics.accuracy_score(Yv, pred)
+		if verbose: print('Acc: ' + str(acc))
 
-	return acc
+		self.src = best
+		self.acc = acc
+
+	def predict (self, X):
+		return self.src.predict(X)

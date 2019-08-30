@@ -1,5 +1,8 @@
 
 data
 models/h5
+models/pkl
+*.pkl
+*.npy
 *.h5
 *.pyc

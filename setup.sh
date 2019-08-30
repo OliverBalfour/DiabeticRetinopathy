@@ -32,6 +32,9 @@ mkdir -p data/vectors/mobilenet-cat
 mkdir -p data/vectors/densenet121
 mkdir -p data/vectors/densenet121-test
 
+mkdir -p models/h5
+mkdir -p models/pkl
+
 echo "Done making directories"
 echo "Make sure the kaggle CLI is installed, downloading and unzipping now:"
 
