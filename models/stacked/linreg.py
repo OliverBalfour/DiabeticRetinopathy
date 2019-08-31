@@ -14,7 +14,7 @@ class Model (BaseModel):
 	def train (self, X, Y, verbose=False):
 		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, onehot=False)
 
-		model = LinearRegression(verbose=verbose, n_jobs=-1)
+		model = LinearRegression()
 		model.fit(Xt, Yt)
 		if verbose: print('fit models')
 

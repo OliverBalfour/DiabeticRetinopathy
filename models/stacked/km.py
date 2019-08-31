@@ -12,7 +12,7 @@ class Model (BaseModel):
 		super().__init__('KM')
 
 	def train (self, X, Y, verbose=False):
-		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, split=0.5, onehot=False)
+		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, split=0.3, onehot=False)
 
 		model = KMeans(n_clusters=2, n_jobs=-1)
 		model.fit(Xt, Yt)

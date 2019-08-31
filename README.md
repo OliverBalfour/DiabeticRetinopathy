@@ -41,6 +41,8 @@ Download data, preprocess, augment, train models, train stacked models, etc.
 0. `python3 processing/augment.py` to augment it and generate datasets
 0. `python3 models/densenet.py` to train main CNN (TODO: interface for training all CNNs on severity and binary datasets)
 0. `python3 models/extraction/*.py` to extract features using all CNNs
-0. `python3 models/stacked/*.py` to train other models stacked on CNN filters
+0. `python3 models/ensemble/model-generation.py` to train other models stacked on CNN filters
+0. `python3 models/ensemble/model-selection.py` to choose best models
+0. `python3 models/ensemble/model-evaluation.py` to compute predictions for train and test data
 
 TODO: Once the pipeline is complete, run `python3 models/evaluate.py filename.png/jpg` to get a prediction for a single image.

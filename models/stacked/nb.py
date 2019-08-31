@@ -14,7 +14,7 @@ class Model (BaseModel):
 	def train (self, X, Y, verbose=False):
 		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, onehot=False)
 
-		model = GaussianNB(verbose=verbose, n_jobs=-1)
+		model = GaussianNB()
 		model.fit(Xt, Yt)
 		if verbose: print('fit models')
 

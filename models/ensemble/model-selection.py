@@ -1,29 +1,27 @@
 
-import os, sys, pickle
+import os, sys, pickle, logging
+import numpy as np
+import tensorflow.keras as keras
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+logging.getLogger('tensorflow').setLevel(logging.FATAL)
+
 sys.path.append('./models')
 sys.path.append('./models/stacked')
-from model_utils import load_xy
 
-model_names = [fname[:-3] for fname in os.listdir('models/stacked/') if 'pycache' not in fname and 'base' not in fname]
-model_modules = {name: __import__(name) for name in model_names}
+models = pickle.load(open('models/pkl/all-models.pkl', 'rb'))
 
-vectors = {
-	"densenet121": load_xy('densenet121'),
-	"mobilenet": load_xy('mobilenet')
-}
+print('Loaded all stacked models')
 
-models = { "densenet121": [], "mobilenet": [] }
+chosen_models = { "densenet121": [], "mobilenet": [] }
 
-for cnn in vectors:
-	print(f'Processing {cnn} stacked models')
-	X, Y = vectors[cnn]
-	for model_name in model_modules:
-		print(f'Training {model_name}')
-		model = model_modules[model_name].Model()
-		model.train(X, Y)
-		model.save(cnn)
-		models[cnn].append(model)
-		print(f'{model_name} acc: {str(model.acc*100)}')
+for cnn in models:
+	accuracies = sorted([(model.name, model.acc) for model in models[cnn]], key=lambda x: x[1], reverse=True)
+	print(cnn)
+	print('\n'.join([' ' + name + ' '*(8-len(name)) + str(round(acc*100,2)) + '%' for name, acc in accuracies]))
+	names = [name for name, acc in accuracies[:9]]
+	print('Using the following 9 models: ' + ', '.join(names))
+	best_models = sorted([model for model in models[cnn] if model.name in names], key=lambda m: m.acc, reverse=True)
+	chosen_models[cnn] = best_models
 
-print(models)
-pickle.dump(models, open(f'models/pkl/all-models.pkl', 'wb'))
+pickle.dump(chosen_models, open(f'models/pkl/best-models.pkl', 'wb'))

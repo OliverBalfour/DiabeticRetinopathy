@@ -5,7 +5,7 @@ from base_model import BaseModel
 import numpy as np
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Input, Dropout, BatchNormalization
+from tensorflow.keras.layers import Dense, Dropout, BatchNormalization
 
 class Model (BaseModel):
 	def __init__ (self):
@@ -14,8 +14,7 @@ class Model (BaseModel):
 	def train (self, X, Y, verbose=False):
 		Xt, Xv, Yt, Yv = self.train_test_split(X, Y)
 		model = Sequential([
-			Input(shape=X.shape[1:]),
-			Dense(256, activation='relu'),
+			Dense(256, input_shape=X.shape[1:], activation='relu'),
 			BatchNormalization(),
 			Dropout(0.4),
 			Dense(2, activation='softmax')
@@ -43,4 +42,12 @@ class Model (BaseModel):
 		self.acc = history.history['val_acc'][-1]
 
 	def predict (self, X):
-		return self.src.predict(X)
+		return np.argmax(self.src.predict(X), axis=1)
+
+	def save (self, alias):
+		# save actual model separately in h5 file
+		self.src.save(f'models/pkl/{self.name}-{alias}.h5')
+		model = self.src
+		self.src = None
+		super().save(alias)
+		self.src = model
