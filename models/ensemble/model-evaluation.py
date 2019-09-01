@@ -12,7 +12,7 @@ sys.path.append('./models/stacked')
 
 from model_utils import load_xy
 
-models = pickle.load(open('models/pkl/best-models.pkl', 'rb'))
+models = pickle.load(open('models/pkl/all-models.pkl', 'rb'))
 
 # ANNs don't like being pickled :/
 for cnn in models:
@@ -35,7 +35,7 @@ for cnn in models:
 			"test": model.predict(Xv)
 		}
 
-pickle.dump(outputs, open(f'models/pkl/stacked-outputs.pkl', 'wb'))
+pickle.dump(outputs, open('models/pkl/all-stacked-outputs.pkl', 'wb'))
 
 # get predictions for accuracy, confusion matrices, local accuracy computation
 # generate confusion matrices for each model, and naive ensembling methods
