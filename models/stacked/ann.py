@@ -15,7 +15,7 @@ class Model (BaseModel):
 		Yt, Yv = self.onehot_from_cat(Yt), self.onehot_from_cat(Yv)
 
 		model = Sequential([
-			Dense(256, input_shape=X.shape[1:], activation='relu'),
+			Dense(256, input_shape=Xt.shape[1:], activation='relu'),
 			BatchNormalization(),
 			Dropout(0.4),
 			Dense(2, activation='softmax')
@@ -33,7 +33,7 @@ class Model (BaseModel):
 			Xt, Yt,
 			batch_size=50,
 			epochs=2,
-			steps_per_epoch=(X.shape[0] // 50),
+			steps_per_epoch=(Xt.shape[0] // 50),
 			verbose=1,
 			shuffle=True,
 			validation_data=(Xv,Yv)

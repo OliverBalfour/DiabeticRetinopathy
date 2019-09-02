@@ -43,8 +43,16 @@ outputs['true_labels'] = {
 	"test": load_xy(cnn + '-test')[1]
 }
 
+outputs['acc'] = { cnn: { model.name: model.acc for model in models[cnn] } for cnn in ['densenet121', 'mobilenet'] }
 
-# outputs = { 'cnn': { 'modelname': {'train': ndarray(samples, features), 'valid': ditto, 'test': ditto }, ... }, ... }
+"""
+outputs = {
+	"mobilenet": { "ADA": { "train": (samples, features), "valid": ..., "test": ... }, ... }
+	"densenet121": ...,
+	"true_labels": { "train": (samples, 2), "valid": ..., "test": ... },
+	"acc": { "mobilenet": { "ADA": 0.99, ... }, "densenet121": ... }
+}
+"""
 
 pickle.dump(outputs, open('models/pkl/all-stacked-outputs.pkl', 'wb'))
 

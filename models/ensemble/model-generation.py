@@ -11,7 +11,7 @@ import logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
-model_names = [fname[:-3] for fname in os.listdir('models/stacked/') if 'pycache' not in fname and 'base' not in fname]
+model_names = sorted([fname[:-3] for fname in os.listdir('models/stacked/') if 'pycache' not in fname and 'base' not in fname])
 model_modules = {name: __import__(name) for name in model_names}
 
 vectors = {

@@ -18,10 +18,13 @@ true_labels = outputs['true_labels']['test']
 
 predictions = np.zeros((test_size,2))
 
+def fn (acc):
+	return max(0, acc - 0.5)
+
 for cnn in outputs:
 	for modelname in outputs[cnn]:
 		model_preds = outputs[cnn][modelname]['test']
-		predictions = predictions + model_preds / (num_cnns * num_models)
+		predictions = predictions + model_preds * fn(outputs['acc'][cnn][modelname])
 
 predictions = np.argmax(predictions, axis=1)
 
