@@ -11,8 +11,9 @@ class Model (BaseModel):
 	def __init__ (self):
 		super().__init__('ANN')
 
-	def train (self, X, Y, verbose=False):
-		Xt, Xv, Yt, Yv = self.train_test_split(X, Y)
+	def train (self, Xt, Xv, Yt, Yv, verbose=False):
+		Yt, Yv = self.onehot_from_cat(Yt), self.onehot_from_cat(Yv)
+
 		model = Sequential([
 			Dense(256, input_shape=X.shape[1:], activation='relu'),
 			BatchNormalization(),
@@ -42,7 +43,7 @@ class Model (BaseModel):
 		self.acc = history.history['val_acc'][-1]
 
 	def predict (self, X):
-		return np.argmax(self.src.predict(X), axis=1)
+		return self.src.predict(X)
 
 	def save (self, alias):
 		# save actual model separately in h5 file

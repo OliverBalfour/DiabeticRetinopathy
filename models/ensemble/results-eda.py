@@ -15,14 +15,14 @@ my_cmap = sns.light_palette("Navy", as_cmap=True)
 print('Loaded data')
 
 for y, cnn in enumerate(data.keys()):
-	true_labels = np.argmax(load_xy(cnn)[1], axis=1)
+	true_labels = data['true_labels']['valid']
 
 	for x, model in enumerate(data[cnn].keys()):
 		if x >= num_models: continue # NOTE: is this choosing the best 5 models?
 		# TODO: note that ANNs weren't even in the top 5 models - this approach is better?
 		# maybe make sure it's actually validation data?
 
-		predictions = np.clip(np.round(data[cnn][model]['train']), 0, 1)
+		predictions = np.clip(np.round(data[cnn][model]['valid']), 0, 1)
 		confmat = confusion_matrix(true_labels, predictions)
 
 		ax = axs[y][x]

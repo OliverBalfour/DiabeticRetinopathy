@@ -11,9 +11,7 @@ class Model (BaseModel):
 	def __init__ (self):
 		super().__init__('KM')
 
-	def train (self, X, Y, verbose=False):
-		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, split=0.3, onehot=False)
-
+	def train (self, Xt, Xv, Yt, Yv, verbose=False):
 		model = KMeans(n_clusters=2, n_jobs=-1)
 		model.fit(Xt, Yt)
 		if verbose: print('fit model')
@@ -26,4 +24,4 @@ class Model (BaseModel):
 		self.acc = acc
 
 	def predict (self, X):
-		return self.src.predict(X)
+		return self.onehot_from_cat(self.src.predict(X))

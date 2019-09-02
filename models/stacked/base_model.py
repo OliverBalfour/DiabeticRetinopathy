@@ -35,3 +35,9 @@ class BaseModel:
 			Yt = np.argmax(Yt, axis=1)
 			Yv = np.argmax(Yv, axis=1)
 		return Xt, Xv, Yt, Yv
+
+	def cat_from_onehot (self, onehot):
+		return np.argmax(onehot, axis=1)
+
+	def onehot_from_cat (self, cat):
+		return np.identity(2)[cat]

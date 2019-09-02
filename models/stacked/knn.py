@@ -12,9 +12,7 @@ class Model (BaseModel):
 	def __init__ (self):
 		super().__init__('KNN')
 
-	def train (self, X, Y, verbose=False):
-		Xt, Xv, Yt, Yv = self.train_test_split(X, Y, split=0.5, onehot=False)
-
+	def train (self, Xt, Xv, Yt, Yv, verbose=False):
 		params = {
 			"n_neighbors": [10],
 			"weights": ["distance"],
@@ -37,4 +35,4 @@ class Model (BaseModel):
 		self.acc = acc
 
 	def predict (self, X):
-		return self.src.predict(X)
+		return self.onehot_from_cat(self.src.predict(X))

@@ -1,9 +1,11 @@
 
+import numpy as np
 import os, sys, pickle, contextlib, warnings
 sys.path.append('./models')
 sys.path.append('./models/stacked')
 from model_utils import load_xy
 from base_model import load_model
+from sklearn.model_selection import train_test_split as tts
 
 import logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -19,9 +21,20 @@ vectors = {
 
 models = { "densenet121": [], "mobilenet": [] }
 
+def train_test_split (X, Y, split=0.2, onehot=True):
+	Xt, Xv, Yt, Yv = tts(X, Y, test_size=split, shuffle=True)
+	if not onehot:
+		Yt = np.argmax(Yt, axis=1)
+		Yv = np.argmax(Yv, axis=1)
+	return Xt, Xv, Yt, Yv
+
+split_vectors = { "densenet121": [], "mobilenet": [] }
+
 for cnn in vectors:
 	print(f'Processing {cnn} stacked models')
 	X, Y = vectors[cnn]
+	Xt, Xv, Yt, Yv = train_test_split(X, Y, onehot=False)
+	split_vectors[cnn] = (Xt, Xv, Yt, Yv)
 	for model_name in model_modules:
 
 		model = model_modules[model_name].Model()
@@ -35,7 +48,7 @@ for cnn in vectors:
 			with open(os.devnull, 'w') as f, contextlib.redirect_stdout(f):
 				with warnings.catch_warnings():
 					warnings.filterwarnings('ignore')
-					model.train(X, Y)
+					model.train(Xt, Xv, Yt, Yv)
 					model.save(cnn)
 
 		models[cnn].append(model)
@@ -47,4 +60,6 @@ for key in models:
 		if model.name == 'ANN':
 			model.src = None
 
-pickle.dump(models, open(f'models/pkl/all-models.pkl', 'wb'))
+pickle.dump((models, split_vectors), open(f'models/pkl/all-models.pkl', 'wb'))
+
+# save train/valid data used?

@@ -12,7 +12,7 @@ sys.path.append('./models/stacked')
 
 from model_utils import load_xy
 
-models = pickle.load(open('models/pkl/all-models.pkl', 'rb'))
+models, split_vectors = pickle.load(open('models/pkl/all-models.pkl', 'rb'))
 
 # ANNs don't like being pickled :/
 for cnn in models:
@@ -22,18 +22,29 @@ for cnn in models:
 
 # execute models on data to get predictions
 
-outputs = { "densenet121": {}, "mobilenet": {} }
+outputs = { "densenet121": {}, "mobilenet": {}, 'true_labels': {} }
 
 for cnn in models:
-	Xt, Yt = load_xy(cnn)
-	Xv, Yv = load_xy(cnn + '-test')
+	Xt, Xv, Yt, Yv = split_vectors[cnn]
+	Xte, Yte = load_xy(cnn + '-test')
+
 
 	for model in models[cnn]:
 		# get predictions for accuracy and confusion matrices
 		outputs[cnn][model.name] = {
-			"train": model.predict(Xt),
-			"test": model.predict(Xv)
+			"train": np.identity(2)[model.predict(Xt)],
+			"valid": np.identity(2)[model.predict(Xv)],
+			"test": np.identity(2)[model.predict(Xte)]
 		}
+
+outputs['true_labels'] = {
+	"train": split_vectors['mobilenet'][2],
+	"valid": split_vectors['mobilenet'][3],
+	"test": load_xy(cnn + '-test')[1]
+}
+
+
+# outputs = { 'cnn': { 'modelname': {'train': ndarray(samples, features), 'valid': ditto, 'test': ditto }, ... }, ... }
 
 pickle.dump(outputs, open('models/pkl/all-stacked-outputs.pkl', 'wb'))
 

@@ -21,12 +21,15 @@ print('Loaded model. Processing...')
 img = (cv2.cvtColor(cv2.imread('images/exemplars/4/1a7e3356b39c.png'), cv2.COLOR_BGR2RGB) / 256).reshape(1, 224, 224, 3)
 
 row = 0 # first row is a little broken
-rows = 10
+rows = 8
 cols = 8
-fig, axs = plt.subplots(rows, cols, figsize=(8, 10))
+j = -1; nth = 4
+fig, axs = plt.subplots(rows, cols, figsize=(10, 10))
 plt.axis('off')
 for k in range(5, len(model.layers)):
 	if "Conv2D" in str(model.layers[k].__class__):
+		j += 1
+		if j % nth != 0: continue
 		act = Model(inputs=model.input, outputs=model.layers[k].output).predict(img)[0]
 		# act.shape = (w, h, filters)
 		for col in range(cols):
