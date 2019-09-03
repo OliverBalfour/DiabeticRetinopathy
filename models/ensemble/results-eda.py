@@ -3,7 +3,7 @@ import pickle, sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, accuracy_score
 sys.path.append('./models')
 from model_utils import load_xy
 
@@ -14,16 +14,17 @@ my_cmap = sns.light_palette("Navy", as_cmap=True)
 
 print('Loaded data')
 
-for y, cnn in enumerate(data.keys()):
-	true_labels = data['true_labels']['valid']
+for y, cnn in enumerate(['densenet121', 'mobilenet']): # can't use data.keys() as this includes 'true_labels' and 'acc'
+	true_labels = data['true_labels'][cnn]['valid']
 
 	for x, model in enumerate(data[cnn].keys()):
-		if x >= num_models: continue # NOTE: is this choosing the best 5 models?
-		# TODO: note that ANNs weren't even in the top 5 models - this approach is better?
-		# maybe make sure it's actually validation data?
+		if x >= num_models: continue
 
-		predictions = np.clip(np.round(data[cnn][model]['valid']), 0, 1)
-		confmat = confusion_matrix(true_labels, predictions)
+		predictions = data[cnn][model]['valid']
+		predictions = np.clip(np.round(predictions), 0, 1)
+		confmat = confusion_matrix(true_labels, np.argmax(predictions, axis=1))
+		acc = accuracy_score(true_labels, np.argmax(predictions, axis=1))
+		print(f'{cnn}-{model} valid acc {str(acc*100)}%, reported valid acc {str(data["acc"][cnn][model]*100)}%')
 
 		ax = axs[y][x]
 		sns.heatmap(confmat, ax=ax, annot=True, cmap=my_cmap, cbar=(x == num_models), fmt='d')

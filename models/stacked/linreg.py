@@ -24,4 +24,4 @@ class Model (BaseModel):
 		self.acc = acc
 
 	def predict (self, X):
-		return self.onehot_from_cat(self.src.predict(X))
+		return self.onehot_from_cat(np.asarray(np.clip(np.round(self.src.predict(X)), 0, 1), dtype='int'))

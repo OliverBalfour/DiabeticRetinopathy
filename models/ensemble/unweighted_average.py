@@ -14,7 +14,7 @@ test_size = 2000
 num_cnns = 2
 num_models = len(outputs['mobilenet'].keys())
 
-true_labels = outputs['true_labels']['test']
+true_labels = outputs['true_labels']['mobilenet']['test']
 
 predictions = np.zeros((test_size,2))
 
