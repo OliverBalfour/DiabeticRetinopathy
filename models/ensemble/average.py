@@ -3,34 +3,34 @@ import os, sys, pickle
 import numpy as np
 from sklearn import metrics
 
-sys.path.append('./models')
-sys.path.append('./models/stacked')
-
-from model_utils import load_xy
-
 outputs = pickle.load(open('models/pkl/all-stacked-outputs.pkl', 'rb'))
 
 test_size = 2000
 num_cnns = 2
 num_models = len(outputs['mobilenet'].keys())
-
 true_labels = outputs['true_labels']['mobilenet']['test']
 
-predictions = np.zeros((test_size,2))
+# returns ndarray (models, samples, classes) and list of model accuracies
+def get_prediction_tensor ():
+	tensor = np.zeros((num_models*num_cnns, test_size, 2))
+	models = []
+	for cnn in  ['densenet121', 'mobilenet']:
+		for modelname in outputs[cnn]:
+			tensor[len(models)] = outputs[cnn][modelname]['test']
+			models.append(outputs['acc'][cnn][modelname])
+			# models.append((cnn, modelname, outputs['acc'][cnn][modelname]))
+	return tensor, np.array(models)
 
-avg = input('(w)eighted/(u)nweighted: ')
+tensor, models = get_prediction_tensor()
 
-def weighted (acc):
-	return max(0, acc - 0.5)
-def unweighted (acc):
-	return 1  / (num_cnns * num_models)
+# ensemble with a specific averaging function which is passed an ndarray (models, classes) and model accuracies for each sample and prints accuracy #returns (classes,)
+def ensemble_predictions (tensor, models, fn):
+	predictions = [fn(tensor[:,k,:], models) for k in range(tensor.shape[1])]
+	predictions = np.argmax(predictions, axis=1)
+	print(metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions))
 
-for cnn in ['densenet121', 'mobilenet']:
-	for modelname in outputs[cnn]:
-		model_preds = outputs[cnn][modelname]['test']
-		acc = outputs['acc'][cnn][modelname]
-		predictions = predictions + model_preds * (weighted(acc) if avg == 'w' else unweighted(acc))
+ensemble_predictions(tensor, models, lambda mat, models: np.average(mat.T, axis=1).T)
+ensemble_predictions(tensor, models, lambda mat, models: np.sum(mat.T, axis=1).T)
+ensemble_predictions(tensor, models, lambda mat, models: np.sum(np.multiply(mat.T, np.max(models-0.6)), axis=1).T)
 
-predictions = np.argmax(predictions, axis=1)
-
-print(metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions))
+# for some reason the acc weighted code gives identical results... fix?
