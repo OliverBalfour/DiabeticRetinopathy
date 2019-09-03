@@ -23,14 +23,15 @@ def get_prediction_tensor ():
 
 tensor, models = get_prediction_tensor()
 
-# ensemble with a specific averaging function which is passed an ndarray (models, classes) and model accuracies for each sample and prints accuracy #returns (classes,)
+# ensemble with a specific averaging function which is passed an ndarray (models, classes) and model accuracies for each sample and returns accuracy
 def ensemble_predictions (tensor, models, fn):
 	predictions = [fn(tensor[:,k,:], models) for k in range(tensor.shape[1])]
 	predictions = np.argmax(predictions, axis=1)
-	print(metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions))
+	return metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions)
 
-ensemble_predictions(tensor, models, lambda mat, models: np.average(mat.T, axis=1).T)
-ensemble_predictions(tensor, models, lambda mat, models: np.sum(mat.T, axis=1).T)
-ensemble_predictions(tensor, models, lambda mat, models: np.sum(np.multiply(mat.T, np.max(models-0.6)), axis=1).T)
+def en (title, fn):
+	print(title + ': ' + ' ' * (30 - len(title)) + str(round(ensemble_predictions(tensor, models, fn) * 100, 1)) + '%')
 
-# for some reason the acc weighted code gives identical results... fix?
+en('Best individual model', lambda mat, models: mat[np.argmax(models)])
+en('Simple unweighted average', lambda mat, models: np.average(mat.T, axis=1).T)
+en('Average weighted by accuracy', lambda mat, models: np.average(np.multiply(mat.T, np.clip(models-0.6,0,1)), axis=1).T)
