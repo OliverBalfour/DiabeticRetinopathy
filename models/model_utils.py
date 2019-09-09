@@ -173,3 +173,30 @@ def get_sorted_datasources ():
 	files.sort()
 	datasources = [1 - (x.endswith('left.png') or x.endswith('right.png')) for x in files]
 	return datasources
+
+
+def process_model_without_saving (model, modelname, tdir, image_size, preprocess=None, postprocess=None, max_steps=5000, binary=False):
+	data = []
+	for cid in range(2):
+		print('Processing cid ' + str(cid))
+		data_generator = ImageDataGenerator(
+			rescale=1.0/255,
+			preprocessing_function=preprocess
+		)
+		generator_flow = data_generator.flow_from_directory(
+			tdir, target_size=(image_size,image_size), batch_size=1,
+			class_mode='categorical', shuffle=True, color_mode='rgb',
+			classes=[str(cid)]
+		)
+		generator = gen_wrapper(generator_flow)
+		tensors = model.predict_generator(
+			generator, verbose=1,
+			steps=max_steps,
+		)
+		if postprocess is not None:
+			tensors = postprocess(tensors)
+		data.append(tensors)
+	X = np.concatenate(data[0], data[1])
+	cids = np.concatenate(np.zeros(len(data[0])), np.zeros(len(data[1])) + 1)
+	Y = np.identity(2)[cids]
+	return X, Y
