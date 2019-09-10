@@ -32,11 +32,12 @@ outputs = { "densenet121": {}, "mobilenet": {}, 'true_labels': {} }
 for cnn in models:
 	Xt, Xv, Yt, Yv = split_vectors[cnn]
 	Xte, Yte = load_xy(cnn + '-test')
-
+	X_all_train, _ = load_xy(cnn)
 
 	for model in models[cnn]:
 		# get predictions for accuracy and confusion matrices
 		outputs[cnn][model.name] = {
+			"all-train": model.predict(X_all_train),
 			"train": model.predict(Xt),
 			"valid": model.predict(Xv),
 			"test": model.predict(Xte)
