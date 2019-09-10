@@ -1,0 +1,34 @@
+Model                                                accuracy   sensitivity  specificity
+Best individual model:                               72.55%     70.6%        74.5%
+Simple unweighted average:                           76.9%      59.6%        94.2%
+Average weighted by accuracy:                        78.6%      66.8%        90.4%
+Optimised Lehmer mean weighted by accuracy:          77.4%      67.7%        87.1%
+Optimised Lehmer mean weighted by local accuracy:    76.6%      59.1%        94.1%
+Average weighted by local accuracy:                  76.9%      59.6%        94.2%
+Best CNN (densenet121):                              70.8%      75.9%        65.7%
+L_p weighted by accuracy, p=-2.6:                    79.5%      68.6%        90.4%
+L_p weighted by accuracy, p=4.8:                     79.5%      68.2%        90.8%
+
+densenet121-A 		                                 70.8%	    75.9%        65.7%
+densenet121-ADA 	                                 73.95%	    64.5%        83.4%
+densenet121-ANN 	                                 72.55%	    70.6%        74.5%
+densenet121-KM 		                                 54.9%	    9.8%         100.0%
+densenet121-KNN 	                                 73.3%	    67.9%        78.7%
+densenet121-LINREG 	                                 74.1%	    68.4%        79.8%
+densenet121-LOGREG 	                                 73.4%	    68.4%        78.4%
+densenet121-NB 		                                 71.4%	    48.7%        94.1%
+densenet121-RF 		                                 73.25%	    66.9%        79.6%
+densenet121-SVM 	                                 74.25%	    66.1%        82.4%
+densenet121-XGB 	                                 74.0%	    67.9%        80.1%
+
+mobilenet-A 		                                 67.5%	    39.0%        96.0%
+mobilenet-ADA 		                                 72.3%	    65.1%        79.5%
+mobilenet-ANN 		                                 71.55%	    74.8%        68.3%
+mobilenet-KM 		                                 57.8%	    15.7%        99.9%
+mobilenet-KNN 		                                 69.95%	    62.6%        77.3%
+mobilenet-LINREG 	                                 72.4%	    64.7%        80.1%
+mobilenet-LOGREG 	                                 72.45	    66.5%        78.4%
+mobilenet-NB 		                                 65.4%	    33.7%        97.1%
+mobilenet-RF 		                                 71.45%	    62.7%        80.2%
+mobilenet-SVM 		                                 72.8%	    62.4%        83.2%
+mobilenet-XGB 		                                 73.15%	    64.5%        81.8%

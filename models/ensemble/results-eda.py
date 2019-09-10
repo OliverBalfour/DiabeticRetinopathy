@@ -49,16 +49,19 @@ for y, cnn in enumerate(cnns): # can't use data.keys() as this includes 'true_la
 		predictions = np.clip(np.round(predictions), 0, 1)
 		truth = np.argmax(true_labels, axis=1) if model != 'A' else np.argmax(load_xy(cnn+'-test-output')[1], axis=1)
 		confmat = confusion_matrix(truth, np.argmax(predictions, axis=1))
-		acc = accuracy_score(truth, np.argmax(predictions, axis=1))
-		# print(f'{cnn}-{model} test acc {str(acc*100)}%, reported test acc {str(data["acc"][cnn][model]*100)}%')
+
+		acc = round(accuracy_score(truth, np.argmax(predictions, axis=1))*100,2)
+		tn, fp, fn, tp = confmat.ravel()
+		sensitivity = round(tp/(tp+fn)*100, 2)
+		specificity = round(tn/(tn+fp)*100, 2)
+		print(f'{cnn}-{model} test acc {str(acc)}% sensitivity {str(sensitivity)}% specificity {str(specificity)}%')
 
 		fx = x % row_w
 		fy = y*2 + x // row_w
 		ax = fig.add_subplot(4, row_w, fy * row_w + fx + 1)
 		sns.heatmap(confmat, ax=ax, annot=True, cmap=my_cmap, cbar=(x == num_models), fmt='d')
 
-		stracc = str(round(acc*100,2))
-		ax.set_title(f'{model_names[cnn]} {model_names[model]} ({stracc}%)', fontsize=10)
+		ax.set_title(f'{model_names[cnn]} {model_names[model]} ({str(acc)}%)', fontsize=10)
 
 		if x // row_w == 1 and y == 1: ax.set_xlabel('Prediction')
 		if x // row_w == 1 and y == 1: ax.xaxis.set_ticklabels(('benign', 'malignant'), fontsize=8)

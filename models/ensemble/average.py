@@ -6,6 +6,7 @@ from lehmer_mean import optimise_lehmer_mean, lehmer_mean
 from local_accuracy import compute_local_accuracy, get_nearest_neighbours_densenet
 sys.path.append('./models')
 from model_utils import load_xy
+import matplotlib.pyplot as plt
 
 # NOTE: this code is super messy and needs refactoring
 
@@ -39,10 +40,18 @@ tensor, models, modelnames = get_prediction_tensor()
 def ensemble_predictions (tensor, models, fn):
 	predictions = [fn(tensor[:,k,:], models, k) for k in range(tensor.shape[1])]
 	predictions = np.argmax(predictions, axis=1)
-	return metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions)
+	tn, fp, fn, tp = metrics.confusion_matrix(np.argmax(true_labels, axis=1), predictions).ravel()
+	return {
+		"accuracy": round(metrics.accuracy_score(np.argmax(true_labels, axis=1), predictions) * 100, 2),
+		"sensitivity": round(tp/(tp+fn)*100, 2),
+		"specificity": round(tn/(tn+fp)*100, 2)
+	}
 
 def en (title, fn):
-	print(title + ': ' + ' ' * (50 - len(title)) + str(round(ensemble_predictions(tensor, models, fn) * 100, 2)) + '%')
+	data = ensemble_predictions(tensor, models, fn)
+	spaces = ' ' * (50 - len(title))
+	print(f'{title}: {spaces} {data["accuracy"]}%      {data["sensitivity"]}%      {data["specificity"]}%')
+print('Model' + ' ' * 47 + 'accuracy sensitivity specificity')
 
 epsilon = 0.5
 
@@ -74,11 +83,11 @@ def lehmer_mat_custom (mat, accuracies, p):
 en('Best individual model', lambda mat, models, i: mat[np.argmax(models)])
 en('Simple unweighted average', lambda mat, models, i: np.average(mat.T, axis=1).T)
 en('Average weighted by accuracy', lambda mat, models, i: np.average(np.multiply(mat.T, np.clip(models-0.6,0,1)), axis=1).T)
-# for k in range(5):
-# 	p = 0.6 + k/5
-# 	en('L_p weighted by accuracy, p='+str(p), lambda mat, models, i: lehmer_mat_custom(mat, models, p))
-# for p in [-10, 0.01, 0.5, 10, -1000, 1000]:
-# 	en('L_p weighted by accuracy, p='+str(p), lambda mat, models, i: lehmer_mat_custom(mat, models, p))
+for k in range(5):
+	p = 0.6 + k/5
+	en('L_p weighted by accuracy, p='+str(p), lambda mat, models, i: lehmer_mat_custom(mat, models, p))
+for p in [-10, 0.01, 0.5, 10, -1000, 1000, -2.6, 4.8]:
+	en('L_p weighted by accuracy, p='+str(p), lambda mat, models, i: lehmer_mat_custom(mat, models, p))
 
 # takes ages to compute, and the output is the same every time, hence the float literals
 p_densenet = 1.1756283000118866 #get_p('densenet121', 'valid')
@@ -117,9 +126,29 @@ def local_acc_weighted_mean (mat, accuracies, i):
 en('Optimised Lehmer mean weighted by local accuracy', local_acc_weighted_lehmer_mean)
 en('Average weighted by local accuracy', local_acc_weighted_mean)
 
-# do AM weighted by LA/2+GA/2 ?
-# save k-NN and then use twice for L_p and AM
-
-#lambda mat, models, i:
-
 print('Best CNN (densenet121):                             70.8%')
+
+def graph_lehmer_base ():
+	ps_pos = np.logspace(-1.0, 2.0, num=50)
+	ps = np.concatenate((-ps_pos[::-1], ps_pos))
+	all_data = {
+		"accuracy": [],
+		"sensitivity": [],
+		"specificity": []
+	}
+	for p in ps:
+		data = ensemble_predictions(tensor, models, lambda mat, models, i: lehmer_mat_custom(mat, models, p))
+		all_data['accuracy'].append(data['accuracy'])
+		all_data['sensitivity'].append(data['sensitivity'])
+		all_data['specificity'].append(data['specificity'])
+
+	plt.xscale('symlog')
+	plt.yscale('linear')
+	plt.ylim(top=100, bottom=50)
+	for key in all_data:
+		plt.plot(ps, all_data[key], label=key[0].upper()+key[1:])
+	plt.legend()
+	plt.title('Performance Metrics versus Lehmer Mean Base')
+	plt.ylabel('Percentage (linear scale)')
+	plt.xlabel('Base (p) for Lehmer mean (log scale)')
+	plt.show()
