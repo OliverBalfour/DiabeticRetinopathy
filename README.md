@@ -48,5 +48,3 @@ Download data, preprocess, augment, train models, train stacked models, etc. Thi
 0. `python3 models/ensemble/model-evaluation.py` to compute predictions for train and test data
 0. `python3 models/ensemble/average.py` to compute ensemble outputs
 0. `python3 models/ensemble/results-eda.py` to generate confusion matrices
-
-TODO: Once the pipeline is complete, run `python3 models/evaluate.py filename.png/jpg` to get a prediction for a single image.
