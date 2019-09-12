@@ -32,3 +32,40 @@ mobilenet-NB 		                                 65.4%	    33.7%        97.1%
 mobilenet-RF 		                                 71.45%	    62.7%        80.2%
 mobilenet-SVM 		                                 72.8%	    62.4%        83.2%
 mobilenet-XGB 		                                 73.15%	    64.5%        81.8%
+
+
+
+
+
+Model	Accuracy	Sensitivity	Specificity
+Best individual	72.55\%	70.6\%	74.5\%
+Unweighted average	76.9\%	59.6\%	94.2\%
+Accuracy weighted average	78.6\%	66.8\%	90.4\%
+Optimised Lehmer mean weighted by accuracy	77.4\%	67.7\%	87.1\%
+Optimised Lehmer mean weighted by local accuracy	76.6\%	59.1\%	94.1\%
+Average weighted by local accuracy	76.9\%	59.6\%	94.2\%
+Best complete CNN	70.8\%	75.9\%	65.7\%
+Lehmer mean base -2.6 weighted by accuracy	79.5\%	68.6\%	90.4\%
+Lehmer mean base 4.8 weighted by accuracy	79.5\%	68.2\%	90.8\%
+DenseNet121 CNN	70.8\%	75.9\%	65.7\%
+DenseNet AdaBoost	73.95\%	64.5\%	83.4\%
+DenseNet Artificial Neural Network	72.55\%	70.6\%	74.5\%
+DenseNet K-Means	54.9\%	9.8\%	100.0\%
+DenseNet K-Nearest Neighbours	73.3\%	67.9\%	78.7\%
+DenseNet Linear Regression	74.1\%	68.4\%	79.8\%
+DenseNet Logistic Regression	73.4\%	68.4\%	78.4\%
+DenseNet Naive Bayes	71.4\%	48.7\%	94.1\%
+DenseNet Random Forest	73.25\%	66.9\%	79.6\%
+DenseNet Support Vector Machine	74.25\%	66.1\%	82.4\%
+DenseNet Gradient Boosting	74.0\%	67.9\%	80.1\%
+MobileNet CNN	67.5\%	39.0\%	96.0\%
+MobileNet AdaBoost	72.3\%	65.1\%	79.5\%
+MobileNet Artificial Neural Network	71.55\%	74.8\%	68.3\%
+MobileNet K-Means	57.8\%	15.7\%	99.9\%
+MobileNet K-Nearest Neighbours	69.95\%	62.6\%	77.3\%
+MobileNet Linear Regression	72.4\%	64.7\%	80.1\%
+MobileNet Logistic Regression	72.45\%	66.5\%	78.4\%
+MobileNet Naive Bayes	65.4\%	33.7\%	97.1\%
+MobileNet Random Forest	71.45\%	62.7\%	80.2\%
+MobileNet Support Vector Machine	72.8\%	62.4\%	83.2\%
+MobileNet Gradient Boosting	73.15\%	64.5\%	81.8\%

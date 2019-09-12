@@ -32,14 +32,14 @@ model_names = {
 cnns = ['densenet121', 'mobilenet']
 
 num_models = 11
-row_w = ceil(num_models/2)
-fig = plt.figure(figsize=(20, 12))
+row_w = 4#ceil(num_models/2)
 
 for cnn in cnns:
 	# 'A' for alphabetical ordering precedence
 	data[cnn]['A'] = { 'test': load_xy(cnn+'-test-output')[0] }
 
 for y, cnn in enumerate(cnns): # can't use data.keys() as this includes 'true_labels' and 'acc'
+	fig = plt.figure(figsize=(15, 9))
 	true_labels = data['true_labels'][cnn]['test']
 
 	for x, model in enumerate(sorted(data[cnn].keys())):
@@ -57,14 +57,14 @@ for y, cnn in enumerate(cnns): # can't use data.keys() as this includes 'true_la
 		print(f'{cnn}-{model} test acc {str(acc)}% sensitivity {str(sensitivity)}% specificity {str(specificity)}%')
 
 		fx = x % row_w
-		fy = y*2 + x // row_w
-		ax = fig.add_subplot(4, row_w, fy * row_w + fx + 1)
+		fy = x // row_w# + y*2
+		ax = fig.add_subplot(3, row_w, fy * row_w + fx + 1)
 		sns.heatmap(confmat, ax=ax, annot=True, cmap=my_cmap, cbar=(x == num_models), fmt='d')
 
 		ax.set_title(f'{model_names[cnn]} {model_names[model]} ({str(acc)}%)', fontsize=10)
 
-		if x // row_w == 1 and y == 1: ax.set_xlabel('Prediction')
-		if x // row_w == 1 and y == 1: ax.xaxis.set_ticklabels(('benign', 'malignant'), fontsize=8)
+		if x // row_w == 2: ax.set_xlabel('Prediction')
+		if x // row_w == 2: ax.xaxis.set_ticklabels(('benign', 'malignant'), fontsize=8)
 		else: ax.xaxis.set_ticklabels(('',''))
 
 		if x % row_w == 0: ax.set_ylabel('True Diagnosis')
@@ -73,6 +73,8 @@ for y, cnn in enumerate(cnns): # can't use data.keys() as this includes 'true_la
 
 
 		ax.set_ylim(bottom=2, top=0) # ensures the y axis is the right way around
+		plt.tight_layout()
+		plt.subplots_adjust(hspace=0.3, wspace=0.2)
 		# TN FP
 		# FN TP
 
@@ -86,8 +88,6 @@ print('Generated charts')
 # 	hspace=0.2,
 # 	wspace=0.1
 # )
-plt.tight_layout()
-plt.subplots_adjust(hspace=0.3, wspace=0.2)
 plt.show()
 
 print('Done')
