@@ -1,6 +1,8 @@
 
 # Diabetic Retinopathy Diagnosis
 
+WARNING: This is an experimental algorithm for diagnosing eye disease. It is not intended for practical or clinical use at this stage. The author is not responsible for any misdiagnoses as a result of misuse of this software.
+
 ## Install & Run
 Install `conda`, then:
 
