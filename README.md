@@ -3,6 +3,8 @@
 
 WARNING: This is an experimental algorithm for diagnosing eye disease. It is not intended for practical or clinical use at this stage. The author is not responsible for any misdiagnoses as a result of misuse of this software.
 
+This algorithm uses a novel technique I call CNN Detachment Ensembling, which is detailed in [this paper](https://drive.google.com/file/d/1rSDY9Rh5cgG4qr7wG3jjNtIcseixEiTM/view). Essentially, a CNN is trained, then the ANN part on the end is discarded. The convolutional layers are used as a feature extraction phase and a number of other models are ensembled using the features extracted by the conv layers as training data. Basically, the NN in CNN is replaced with an ensemble of 10 different ML models for a minimal increase in computational power required, which boosted test set accuracy here from 70.8% to 78.6%.
+
 ## Install & Run
 Install `conda`, then:
 
